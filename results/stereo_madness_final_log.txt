@@ -1,0 +1,18 @@
+﻿Learned the saved run (4932 steps)
+Resumed agent reaches 96.0% without exploration
+ep.     50  eps=0.150  agent progress =  96.1%  (best  96.1%)  known states=5905
+ep.    100  eps=0.150  agent progress =  96.4%  (best  96.4%)  known states=6880
+ep.    200  eps=0.150  agent progress =  96.4%  (best  96.4%)  known states=6996
+ep.    400  eps=0.149  agent progress =  96.4%  (best  96.4%)  known states=7133
+ep.    600  no new record for a while: exploring the last 60 steps
+ep.    600  eps=0.149  agent progress =  96.4%  (best  96.4%)  known states=7270
+ep.    650  eps=0.149  agent progress =  96.6%  (best  96.6%)  known states=7850
+ep.    800  eps=0.149  agent progress =  96.6%  (best  96.6%)  known states=7903
+ep.   1000  eps=0.148  agent progress =  96.6%  (best  96.6%)  known states=7999
+ep.   1150  no new record for a while: exploring the last 60 steps
+ep.   1200  eps=0.148  agent progress =  96.2%  (best  96.6%)  known states=9008
+ep.   1250  eps=0.148  agent progress =  97.3%  (best  97.3%)  known states=10046
+ep.   1350  eps=0.148  agent progress = 100.0%  (best 100.0%)  known states=11219
+
+>>> LEVEL BEATEN after 1350 episodes, 201000 steps simulated, 99.4s
+Saved: qtable_real_practice_state.pkl, solution_qlearning_real_practice_state.txt

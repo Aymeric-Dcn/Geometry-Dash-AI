@@ -116,14 +116,21 @@ class RealGDEnv:
         y = (raw.y - self._origin[1]) / UNITS_PER_BLOCK
         # Vertical speed in blocks/s, measured from the movement (same meaning as in the simulator)
         vy = 0.0 if prev is None else (y - prev.y) / STEP_SECONDS
-        return PlayerState(x, y, vy, raw.grounded, raw.dead, raw.won, self.steps * 4)
+        return PlayerState(x, y, vy, raw.grounded, raw.dead, self._real_win(raw), self.steps * 4)
+
+    @staticmethod
+    def _real_win(raw: RawState) -> bool:
+        # GD's end-of-level animation calls "level complete" about a second later. If the level is
+        # restarted in between, that call can land in the NEXT attempt and look like a win.
+        # A win only counts if the game also says we are (almost) at 100%.
+        return raw.won and raw.percent >= 99.0
 
     def obs(self, s=None):
         s = s or self.state
         return (s.x, s.y, s.vy, float(s.grounded))
 
     def progress(self, s=None):
-        return 1.0 if self.state.won else min(1.0, self.raw.percent / 100.0)
+        return 1.0 if self.state.won else min(0.99, self.raw.percent / 100.0)
 
     # --- restarts ------------------------------------------------------------------------
     def _restart(self):

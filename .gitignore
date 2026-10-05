@@ -4,3 +4,8 @@ notes/
 mod/build/
 *.geode
 qtable_*.pkl
+*.bak
+*.tmp
+train_log*.txt
+solution_qlearning_real_*.txt
+greedy_run.txt
