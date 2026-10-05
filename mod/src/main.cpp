@@ -14,20 +14,14 @@
 //
 // When no agent is connected, the game behaves exactly as usual.
 
-#ifdef _WIN32
-#ifndef WIN32_LEAN_AND_MEAN
-#define WIN32_LEAN_AND_MEAN
-#endif
-#ifndef NOMINMAX
-#define NOMINMAX
-#endif
-#include <winsock2.h>
-#include <ws2tcpip.h>
-#endif
-
 #include <Geode/Geode.hpp>
 #include <Geode/modify/CCScheduler.hpp>
 #include <Geode/modify/PlayLayer.hpp>
+
+// Sockets: Geode is built with precompiled headers that already pull <windows.h>, which itself
+// includes the classic <winsock.h>. Including <winsock2.h> after that would redefine everything,
+// so we only use functions that <winsock.h> already provides (linked from ws2_32).
+#include <winsock.h>
 
 #include <algorithm>
 #include <cstdlib>
@@ -66,7 +60,7 @@ void startServer() {
     sockaddr_in addr{};
     addr.sin_family = AF_INET;
     addr.sin_port = htons(kPort);
-    inet_pton(AF_INET, "127.0.0.1", &addr.sin_addr);
+    addr.sin_addr.s_addr = htonl(INADDR_LOOPBACK);   // 127.0.0.1 only: not reachable from the network
     if (bind(listenSock, reinterpret_cast<sockaddr*>(&addr), sizeof(addr)) == SOCKET_ERROR ||
         listen(listenSock, 1) == SOCKET_ERROR) {
         log::error("Cannot listen on 127.0.0.1:{}", kPort);
