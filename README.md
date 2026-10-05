@@ -31,6 +31,8 @@ pip install -r requirements.txt
 | `plot_curves.py` | Plots the learning curves |
 | `realenv.py` | Same environment API, but for the real game through the mod |
 | `test_bridge.py` | Checks the connection with the real game |
+| `test_practice.py` | Checks practice mode (checkpoints) on the real game |
+| `diag_bridge.py` | Step-by-step trace of the start of an attempt (debugging) |
 | `mod/` | The Geode mod (C++) |
 
 ### Commands
@@ -84,16 +86,22 @@ python test_bridge.py
 ```
 It checks running, jumping, determinism and speed. While Python is connected but idle, the game freezes: that is expected.
 
-**4. Train on the real game**
+**4. Check practice mode (GD checkpoints)** — `python test_practice.py` checks that respawning at a
+checkpoint reproduces the original run exactly, and that GD's automatic checkpoints are ignored.
+
+**5. Train on the real game**
 ```
-python train_qlearning.py --env real
+python train_qlearning.py --env real                 # practice mode (GD checkpoints)
+python train_qlearning.py --env real --mode normal   # always from the start
+python train_qlearning.py --env real --resume        # continue (Ctrl+C saves everything)
 ```
-Practice mode is not available on the real game yet (normal mode is used).
+Checkpoints are only placed on the ground along the best run so far, and moved back if the agent
+makes no progress from them for 300 attempts (protection against "impossible" checkpoints).
 
 ### Next steps
 
 - Add the ship (hold the button) to the simulator.
-- Practice mode on the real game (GD checkpoints).
+- Phase 2: an agent that sees the obstacles.
 
 ---
 
@@ -122,6 +130,8 @@ pip install -r requirements.txt
 | `plot_curves.py` | Trace les courbes d'apprentissage |
 | `realenv.py` | Même API d'environnement, mais pour le vrai jeu via le mod |
 | `test_bridge.py` | Vérifie la connexion avec le vrai jeu |
+| `test_practice.py` | Vérifie le mode practice (checkpoints) sur le vrai jeu |
+| `diag_bridge.py` | Trace pas à pas du début d'une tentative (débogage) |
 | `mod/` | Le mod Geode (C++) |
 
 ### Commandes
@@ -173,13 +183,19 @@ python test_bridge.py
 ```
 Le script vérifie la course, le saut, le déterminisme et la vitesse. Quand Python est connecté mais ne fait rien, le jeu se fige : c'est normal.
 
-**4. Entraîner sur le vrai jeu**
+**4. Vérifier le mode practice (checkpoints de GD)** — `python test_practice.py` vérifie que repartir
+d'un checkpoint reproduit exactement la partie d'origine, et que les checkpoints automatiques de GD sont ignorés.
+
+**5. Entraîner sur le vrai jeu**
 ```
-python train_qlearning.py --env real
+python train_qlearning.py --env real                 # mode practice (checkpoints de GD)
+python train_qlearning.py --env real --mode normal   # toujours depuis le début
+python train_qlearning.py --env real --resume        # reprendre (Ctrl+C sauvegarde tout)
 ```
-Le mode practice n'est pas encore disponible sur le vrai jeu (le mode normal est utilisé).
+Les checkpoints ne sont posés qu'au sol, le long de la meilleure partie, et reculés si l'IA ne progresse
+pas pendant 300 essais (protection contre les checkpoints « impossibles »).
 
 ### Suite
 
 - Ajouter le vaisseau (maintenir la touche) dans le simulateur.
-- Mode practice sur le vrai jeu (checkpoints de GD).
+- Phase 2 : une IA qui voit les obstacles.

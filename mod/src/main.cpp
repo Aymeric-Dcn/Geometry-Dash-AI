@@ -11,10 +11,17 @@
 //   RESET                        S ...   (state right after the restart)
 //   STATE                        S ...   (current state, no time passes)
 //   SPEED n                      OK      (n steps per rendered frame, 1 = real time)
+//   PRACTICE 1 | PRACTICE 0      OK      (enter / leave practice mode)
+//   CHECKPOINT                   OK n    (place a checkpoint here; n = number of checkpoints)
+//   CLEARCP                      OK      (remove all checkpoints: RESET goes back to the start)
+//
+// In practice mode, RESET respawns at the last checkpoint placed with CHECKPOINT. The checkpoints
+// GD places by itself (auto-checkpoints) are removed as soon as they appear.
 //
 // When no agent is connected, the game behaves exactly as usual.
 
 #include <Geode/Geode.hpp>
+#include <Geode/modify/AppDelegate.hpp>
 #include <Geode/modify/CCScheduler.hpp>
 #include <Geode/modify/PlayLayer.hpp>
 
@@ -41,6 +48,7 @@ std::string inbox;
 int stepsPerFrame = 20;                   // game steps per rendered frame (speedhack)
 bool holding = false;                     // is the jump button currently held by the agent
 bool won = false;
+unsigned int ourCheckpoints = 0;          // checkpoints placed on the agent's request
 
 bool connected() {
     return client != INVALID_SOCKET;
@@ -104,6 +112,7 @@ void tryAccept() {
     inbox.clear();
     holding = false;
     won = false;
+    ourCheckpoints = 0;
     log::info("AI client connected");
 }
 
@@ -148,6 +157,16 @@ int gamemode(PlayerObject* p) {
     if (p->m_isSpider) return 6;
     if (p->m_isSwing) return 7;
     return 0;                       // cube
+}
+
+// Remove every checkpoint the agent did not ask for (GD's automatic ones).
+void trimCheckpoints(PlayLayer* pl) {
+    auto arr = pl->m_checkpointArray;
+    while (arr && arr->count() > ourCheckpoints) {
+        auto before = arr->count();
+        pl->removeCheckpoint(false);                  // false = remove the last one
+        if (arr->count() >= before) break;            // safety: never loop forever
+    }
 }
 
 std::string stateLine(PlayLayer* pl) {
@@ -199,14 +218,44 @@ class $modify(BridgeScheduler, CCScheduler) {
                 CCScheduler::update(kStepDt);                 // advance exactly 1/60 s
                 pl = PlayLayer::get();
                 if (!pl) return;                              // level was left
+                trimCheckpoints(pl);
                 ++steps;
                 reply = stateLine(pl);
             }
             else if (line == "RESET") {
                 releaseButton(pl);
                 won = false;
+                trimCheckpoints(pl);
                 pl->resetLevel();
                 reply = stateLine(pl);
+            }
+            else if (line == "PRACTICE 1" || line == "PRACTICE 0") {
+                bool on = line.back() == '1';
+                releaseButton(pl);
+                if (pl->m_isPracticeMode != on) pl->togglePracticeMode(on);
+                ourCheckpoints = 0;
+                trimCheckpoints(pl);
+                reply = "OK\n";
+            }
+            else if (line == "CHECKPOINT") {
+                if (!pl->m_isPracticeMode) {
+                    reply = "E not in practice mode\n";
+                } else {
+                    trimCheckpoints(pl);
+                    pl->markCheckpoint();
+                    auto n = pl->m_checkpointArray ? pl->m_checkpointArray->count() : 0;
+                    if (n > ourCheckpoints) {
+                        ourCheckpoints = n;
+                        reply = fmt::format("OK {}\n", n);
+                    } else {
+                        reply = "E checkpoint refused\n";
+                    }
+                }
+            }
+            else if (line == "CLEARCP") {
+                ourCheckpoints = 0;
+                trimCheckpoints(pl);
+                reply = "OK\n";
             }
             else if (line == "STATE") {
                 reply = stateLine(pl);
@@ -250,5 +299,20 @@ class $modify(BridgePlayLayer, PlayLayer) {
             return;
         }
         PlayLayer::levelComplete();
+    }
+};
+
+// When the window loses focus or is minimized, GD is told it "goes to the background": it
+// pauses the level, pauses the sound and may stop its main loop entirely. While the agent is
+// playing, we ignore these notifications so training keeps running behind other windows.
+class $modify(BridgeAppDelegate, AppDelegate) {
+    void applicationWillResignActive() {
+        if (bridge::connected()) return;
+        AppDelegate::applicationWillResignActive();
+    }
+
+    void applicationDidEnterBackground() {
+        if (bridge::connected()) return;
+        AppDelegate::applicationDidEnterBackground();
     }
 };

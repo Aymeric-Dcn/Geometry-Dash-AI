@@ -5,7 +5,7 @@
 	},
 	"id": "aymeric-dcn.gd-ai-bridge",
 	"name": "GD AI Bridge",
-	"version": "v0.1.0",
+	"version": "v0.2.0",
 	"developer": "Aymeric-Dcn",
 	"description": "Lets a Python reinforcement learning agent control the player through a local socket"
 }

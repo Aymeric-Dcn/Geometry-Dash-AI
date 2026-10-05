@@ -16,6 +16,7 @@ from dataclasses import dataclass
 from gdsim import PlayerState
 
 UNITS_PER_BLOCK = 30.0
+CHECKPOINT_SEARCH = 30      # how far back we look for a valid checkpoint position (steps)
 STEP_SECONDS = 1.0 / 60.0
 GAMEMODES = ["cube", "ship", "ball", "ufo", "wave", "robot", "spider", "swing"]
 
@@ -42,6 +43,19 @@ class RawState:
                         float(percent), int(mode))
 
 
+@dataclass(frozen=True)
+class Checkpoint:
+    """A place to restart from in practice mode.
+
+    step:   index of the agent's step right after the respawn (same numbering as an attempt
+            started from the beginning, so the Q-table keys stay consistent)
+    prefix: the actions that lead from the start of the level to the checkpoint. The game is
+            deterministic, so replaying them always brings the player to the same place.
+    """
+    step: int
+    prefix: tuple
+
+
 class RealGDEnv:
     def __init__(self, host="127.0.0.1", port=22222, speed=20, max_seconds=120):
         """speed = game steps per rendered frame (1 = real time, 20 = up to 20x faster)."""
@@ -59,6 +73,8 @@ class RealGDEnv:
         self.steps = 0
         self._origin = (0.0, 0.0)
         self._waiting_hint = False
+        self._practice = False
+        self._active_cp = None          # the Checkpoint currently placed in GD, if any
         self.set_speed(speed)
 
     # --- low-level protocol ------------------------------------------------------------
@@ -83,10 +99,14 @@ class RealGDEnv:
         line, self._buffer = self._buffer.split(b"\n", 1)
         return line.decode("ascii").strip()
 
+    def _expect_ok(self, text: str) -> str:
+        answer = self._command(text)
+        if not answer.startswith("OK"):
+            raise RuntimeError(f"{text!r} refused by the game: {answer!r}")
+        return answer
+
     def set_speed(self, steps_per_frame: int):
-        answer = self._command(f"SPEED {int(steps_per_frame)}")
-        if answer != "OK":
-            raise RuntimeError(f"SPEED refused: {answer!r}")
+        self._expect_ok(f"SPEED {int(steps_per_frame)}")
 
     # --- conversion to the simulator's units ------------------------------------------
     def _to_state(self, raw: RawState, prev: PlayerState | None) -> PlayerState:
@@ -103,13 +123,73 @@ class RealGDEnv:
     def progress(self, s=None):
         return 1.0 if self.state.won else min(1.0, self.raw.percent / 100.0)
 
+    # --- restarts ------------------------------------------------------------------------
+    def _restart(self):
+        """RESET, then wait until the player actually moves forward.
+
+        After a restart (or a respawn at a checkpoint), GD keeps the player still for a few
+        rendered frames. The number of frozen steps depends on real frames, not on game time,
+        so it varies. Waiting for the first step that moves the player forward makes every
+        attempt start from exactly the same state (the first step is always "do nothing").
+        """
+        self.raw = RawState.parse(self._command("RESET"))
+        prev_x = self.raw.x
+        for _ in range(1000):
+            self.raw = RawState.parse(self._command("STEP 0"))
+            if self.raw.x > prev_x:
+                return
+            prev_x = self.raw.x
+        raise RuntimeError("The player never started moving after the restart")
+
+    def _set_practice(self, on: bool):
+        if self._practice != on:
+            self._expect_ok(f"PRACTICE {1 if on else 0}")
+            self._practice = on
+            self._active_cp = None
+
+    def _place_checkpoint(self, cp: Checkpoint):
+        """Replay the prefix from the start of the level, then place a GD checkpoint there."""
+        self._expect_ok("CLEARCP")
+        self._active_cp = None
+        self._restart()
+        self._origin = (self.raw.x, self.raw.y)
+        for a in cp.prefix:
+            self.raw = RawState.parse(self._command(f"STEP {a}"))
+            if self.raw.dead:
+                raise RuntimeError("Died while replaying the way to a checkpoint (game not deterministic?)")
+        self._expect_ok("CHECKPOINT")
+        self._active_cp = cp
+
+    def make_checkpoint(self, step, actions, states):
+        """Checkpoint near `step` along a known run (actions + states from the same attempt).
+
+        Only positions where the cube is on the ground and the next action is "do nothing" are
+        used: a checkpoint in the air could be a hopeless spot (already falling into a spike),
+        and the "do nothing" condition makes the respawn reproduce the original run exactly.
+        Returns None if no valid position is found.
+        """
+        for k in range(min(step, len(actions) - 1), max(0, step - CHECKPOINT_SEARCH), -1):
+            if states[k].grounded and actions[k] == 0:
+                return Checkpoint(step=k + 1, prefix=tuple(actions[:k]))
+        return None
+
     # --- Gym-like API -------------------------------------------------------------------
     def reset(self, start_state=None):
-        if start_state is not None:
-            raise NotImplementedError("Practice mode (start_state) is not supported on the real game yet")
-        self.raw = RawState.parse(self._command("RESET"))
-        self._origin = (self.raw.x, self.raw.y)     # positions are measured from the spawn point
-        self.steps = 0
+        """start_state=None: start of the level. start_state=Checkpoint: practice-mode respawn."""
+        if start_state is None:
+            if self._practice:
+                self._expect_ok("CLEARCP")      # with no checkpoint, RESET goes back to the start
+                self._active_cp = None
+            self._restart()
+            self._origin = (self.raw.x, self.raw.y)     # positions are measured from the spawn
+            self.steps = 0
+        else:
+            cp = start_state
+            self._set_practice(True)
+            if self._active_cp != cp:
+                self._place_checkpoint(cp)
+            self._restart()                              # respawn at the checkpoint
+            self.steps = cp.step
         self.state = self._to_state(self.raw, None)
         return self.obs(), {}
 
