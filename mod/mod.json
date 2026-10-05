@@ -1,0 +1,11 @@
+{
+	"geode": "5.10.1",
+	"gd": {
+		"win": "2.2081"
+	},
+	"id": "aymeric-dcn.gd-ai-bridge",
+	"name": "GD AI Bridge",
+	"version": "v0.1.0",
+	"developer": "Aymeric-Dcn",
+	"description": "Lets a Python reinforcement learning agent control the player through a local socket"
+}

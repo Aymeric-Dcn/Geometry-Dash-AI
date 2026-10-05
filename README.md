@@ -29,6 +29,9 @@ pip install -r requirements.txt
 | `render.py` | Turns a solution into a GIF |
 | `compare.py` | Compares every variant over 5 seeds |
 | `plot_curves.py` | Plots the learning curves |
+| `realenv.py` | Same environment API, but for the real game through the mod |
+| `test_bridge.py` | Checks the connection with the real game |
+| `mod/` | The Geode mod (C++) |
 
 ### Commands
 
@@ -60,10 +63,37 @@ Takeaways:
 4. A simple search bot is hundreds of times more efficient on this problem. RL becomes worthwhile
    in phase 2 (an agent that sees the level and must generalize to unseen levels).
 
+### Connecting the real game (Geode mod)
+
+The `mod/` folder contains **GD AI Bridge**, a Geode mod (GD 2.2081, Geode 5.10, Windows) that opens a local
+server on `127.0.0.1:22222`. Python drives the game in **lockstep**: the game only advances when the agent
+asks for a step, each step is exactly 1/60 s of game time, and many steps run per rendered frame (speedhack).
+When nothing is connected, the game behaves normally.
+
+**1. Build the mod** — easiest: push the repo, then on GitHub open *Actions → Build Geode mod*, open the
+latest run and download the `gd-ai-bridge` artifact (a zip containing a `.geode` file).
+Local alternative: install the Geode CLI, Visual Studio Build Tools (C++) and CMake, run
+`geode sdk install` and `geode sdk install-binaries` once, then `geode build` inside `mod/`.
+
+**2. Install it** — copy the `.geode` file into `geode/mods/` in the GD folder
+(Steam: right-click GD → Manage → Browse local files), then restart GD.
+
+**3. Test the connection** — open a level (Stereo Madness), then:
+```
+python test_bridge.py
+```
+It checks running, jumping, determinism and speed. While Python is connected but idle, the game freezes: that is expected.
+
+**4. Train on the real game**
+```
+python train_qlearning.py --env real
+```
+Practice mode is not available on the real game yet (normal mode is used).
+
 ### Next steps
 
 - Add the ship (hold the button) to the simulator.
-- Hook up the real game through a Geode mod: read x, y, speed, death; send inputs; speedhack; respawn.
+- Practice mode on the real game (GD checkpoints).
 
 ---
 
@@ -90,6 +120,9 @@ pip install -r requirements.txt
 | `render.py` | Transforme une solution en GIF |
 | `compare.py` | Compare toutes les variantes sur 5 graines |
 | `plot_curves.py` | Trace les courbes d'apprentissage |
+| `realenv.py` | Même API d'environnement, mais pour le vrai jeu via le mod |
+| `test_bridge.py` | Vérifie la connexion avec le vrai jeu |
+| `mod/` | Le mod Geode (C++) |
 
 ### Commandes
 
@@ -119,7 +152,34 @@ Ce qu'on en retire :
 4. Un simple bot de recherche est des centaines de fois plus efficace sur ce problème. Le RL deviendra
    intéressant en phase 2 (une IA qui voit le niveau et doit généraliser à des niveaux inconnus).
 
+### Brancher le vrai jeu (mod Geode)
+
+Le dossier `mod/` contient **GD AI Bridge**, un mod Geode (GD 2.2081, Geode 5.10, Windows) qui ouvre un serveur
+local sur `127.0.0.1:22222`. Python pilote le jeu **pas à pas** : le jeu n'avance que quand l'IA demande un pas,
+chaque pas dure exactement 1/60 s de jeu, et plusieurs pas sont joués par image affichée (speedhack).
+Sans connexion, le jeu fonctionne normalement.
+
+**1. Compiler le mod** — le plus simple : pousser le dépôt, puis sur GitHub ouvrir *Actions → Build Geode mod*,
+ouvrir la dernière exécution et télécharger l'artefact `gd-ai-bridge` (un zip qui contient un fichier `.geode`).
+Alternative en local : installer le Geode CLI, Visual Studio Build Tools (C++) et CMake, lancer une fois
+`geode sdk install` et `geode sdk install-binaries`, puis `geode build` dans `mod/`.
+
+**2. L'installer** — copier le fichier `.geode` dans `geode/mods/` du dossier de GD
+(Steam : clic droit sur GD → Gérer → Parcourir les fichiers locaux), puis relancer GD.
+
+**3. Tester la connexion** — ouvrir un niveau (Stereo Madness), puis :
+```
+python test_bridge.py
+```
+Le script vérifie la course, le saut, le déterminisme et la vitesse. Quand Python est connecté mais ne fait rien, le jeu se fige : c'est normal.
+
+**4. Entraîner sur le vrai jeu**
+```
+python train_qlearning.py --env real
+```
+Le mode practice n'est pas encore disponible sur le vrai jeu (le mode normal est utilisé).
+
 ### Suite
 
 - Ajouter le vaisseau (maintenir la touche) dans le simulateur.
-- Brancher le vrai jeu via un mod Geode : lire x, y, vitesse, mort ; envoyer les inputs ; speedhack ; respawn.
+- Mode practice sur le vrai jeu (checkpoints de GD).

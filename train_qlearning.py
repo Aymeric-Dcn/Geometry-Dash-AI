@@ -7,6 +7,7 @@ Usage:
     python train_qlearning.py --mode normal           # always restarts from the beginning
     python train_qlearning.py --obs x                 # only knows its x position (even blinder)
     python train_qlearning.py --level tuto --seed 3
+    python train_qlearning.py --env real --mode normal  # the REAL game, through the Geode mod
 
 "Practice" mode mimics GD checkpoints: when the agent gets stuck somewhere,
 it restarts from a checkpoint placed a bit earlier instead of from the very start.
@@ -48,9 +49,10 @@ def run_greedy(env, Q, obs_mode):
 
 
 def train(level="stereo_lite", mode="practice", obs_mode="state", episodes=20000,
-          alpha=0.5, gamma=0.99, eps_start=0.3, eps_end=0.02, eval_every=50, seed=0, verbose=True):
+          alpha=0.5, gamma=0.99, eps_start=0.3, eps_end=0.02, eval_every=50, seed=0, verbose=True,
+          env=None):
     random.seed(seed)
-    env = GDEnv(level)
+    env = env or GDEnv(level)                 # simulator by default, or any env with the same API
     Q = defaultdict(lambda: [0.0, 0.0])
     history = []                 # (episode, progress of the no-exploration run)
     checkpoints = []             # (step, state) along the best known run
@@ -96,10 +98,10 @@ def train(level="stereo_lite", mode="practice", obs_mode="state", episodes=20000
                 if verbose:
                     print(f"\n>>> LEVEL BEATEN after {ep} episodes, {total_sim_steps} steps simulated, {dt:.1f}s")
                 return {"won": True, "episodes": ep, "sim_steps": total_sim_steps, "seconds": dt,
-                        "actions": acts, "history": history}
+                        "actions": acts, "history": history, "Q": Q}
 
     return {"won": False, "episodes": episodes, "sim_steps": total_sim_steps,
-            "seconds": time.time() - t0, "actions": run_greedy(env, Q, obs_mode)[0], "history": history}
+            "seconds": time.time() - t0, "actions": run_greedy(env, Q, obs_mode)[0], "history": history, "Q": Q}
 
 
 if __name__ == "__main__":
@@ -109,9 +111,20 @@ if __name__ == "__main__":
     p.add_argument("--obs", choices=["state", "x"], default="state")
     p.add_argument("--episodes", type=int, default=20000)
     p.add_argument("--seed", type=int, default=0)
+    p.add_argument("--env", choices=["sim", "real"], default="sim")
+    p.add_argument("--speed", type=int, default=20, help="real game only: steps per rendered frame")
     args = p.parse_args()
 
-    res = train(args.level, args.mode, args.obs, args.episodes, seed=args.seed)
+    env = None
+    if args.env == "real":
+        from realenv import RealGDEnv
+        if args.mode == "practice":
+            print("Practice mode is not available on the real game yet: using --mode normal")
+            args.mode = "normal"
+        args.level = "real"
+        env = RealGDEnv(speed=args.speed)
+
+    res = train(args.level, args.mode, args.obs, args.episodes, seed=args.seed, env=env)
     tag = f"{args.level}_{args.mode}_{args.obs}"
     with open(f"solution_qlearning_{tag}.txt", "w") as f:
         f.write("".join(map(str, res["actions"])))
