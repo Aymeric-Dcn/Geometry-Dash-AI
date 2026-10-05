@@ -49,6 +49,7 @@ int stepsPerFrame = 20;                   // game steps per rendered frame (spee
 bool holding = false;                     // is the jump button currently held by the agent
 bool won = false;
 unsigned int ourCheckpoints = 0;          // checkpoints placed on the agent's request
+bool trimming = false;                    // true while WE remove checkpoints
 
 bool connected() {
     return client != INVALID_SOCKET;
@@ -164,7 +165,9 @@ void trimCheckpoints(PlayLayer* pl) {
     auto arr = pl->m_checkpointArray;
     while (arr && arr->count() > ourCheckpoints) {
         auto before = arr->count();
+        trimming = true;
         pl->removeCheckpoint(false);                  // false = remove the last one
+        trimming = false;
         if (arr->count() >= before) break;            // safety: never loop forever
     }
 }
@@ -290,6 +293,14 @@ class $modify(BridgePlayLayer, PlayLayer) {
     void pauseGame(bool unfocused) {
         if (unfocused && bridge::connected()) return;
         PlayLayer::pauseGame(unfocused);
+    }
+
+    // In practice mode, GD deletes a checkpoint when the player dies shortly after placing it.
+    // The agent dies a lot right after respawning (that is where it explores), so GD would delete
+    // our checkpoints and send the next attempts back to the start. Only we remove checkpoints.
+    void removeCheckpoint(bool first) {
+        if (bridge::connected() && !bridge::trimming) return;
+        PlayLayer::removeCheckpoint(first);
     }
 
     // Do not open the end screen while the agent is playing: just remember the win.

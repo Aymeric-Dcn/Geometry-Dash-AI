@@ -16,9 +16,9 @@ Ctrl+C stops the training cleanly: the Q-table and the best run so far are saved
 
 "Practice" mode mimics GD checkpoints: when the agent gets stuck somewhere,
 it restarts from a checkpoint placed a bit earlier instead of from the very start.
-On the real game, GD's own practice mode is used, with safeguards against "impossible"
-checkpoints: they are only placed on the ground, and if the agent makes no progress from a
-checkpoint for a while, the checkpoint is moved back.
+On the real game, GD's own practice mode is used. Checkpoints are only placed on the ground,
+along the best run so far. Exploration is focused on the last steps before the death; when the
+record does not move for 500 episodes, this zone doubles and the checkpoint moves back with it.
 """
 import argparse
 import json
@@ -59,7 +59,8 @@ def run_greedy(env, Q, obs_mode):
 
 def train(level="stereo_lite", mode="practice", obs_mode="state", episodes=20000,
           alpha=0.5, gamma=0.99, eps_start=0.3, eps_end=0.02, eval_every=50, seed=0, verbose=True,
-          env=None, Q_init=None, print_every=1000, save_every=None, save_fn=None, stuck_limit=300):
+          env=None, Q_init=None, print_every=1000, save_every=None, save_fn=None,
+          focus_margin=None):
     random.seed(seed)
     env = env or GDEnv(level)                 # simulator by default, or any env with the same API
     Q = defaultdict(lambda: [0.0, 0.0])
@@ -70,34 +71,57 @@ def train(level="stereo_lite", mode="practice", obs_mode="state", episodes=20000
     # Real game: GD checkpoints. One "frontier" checkpoint at a time (placing one costs a replay).
     real_practice = mode == "practice" and hasattr(env, "make_checkpoint")
     frontier = []                # candidate checkpoints along the best run, oldest first
-    cp_index = 0                 # which candidate is used now
-    stuck = 0                    # episodes from this checkpoint without beating the record
+    prev_margin = None
     best_greedy = 0.0
     best_acts = []
+    last_record_ep = 0           # episode of the last new record
     total_sim_steps = 0
     t0 = time.time()
     ep = 0
+
+    if Q_init:
+        # Resuming: measure the current best run first, so that exploration and checkpoints are
+        # focused on the right place from the first episode (instead of exploring everywhere).
+        acts, states, info = run_greedy(env, Q, obs_mode)
+        best_greedy, best_acts = info["progress"], acts
+        if real_practice:
+            cands = [env.make_checkpoint(i, acts, states) for i in range(30, len(acts) - 1, 30)]
+            frontier = list(dict.fromkeys(c for c in cands if c is not None))
+        if verbose:
+            print(f"Resumed agent reaches {100 * best_greedy:.1f}% without exploration")
 
     try:
         for ep in range(1, episodes + 1):
             eps = max(eps_end, eps_start * (1 - ep / (0.5 * episodes)))
 
+            # Focused exploration: no random moves on the part of the level already mastered,
+            # explore only in the last `margin` steps of the best run so far. If the record does
+            # not move for 500 episodes, the fatal decision may be earlier: the margin doubles
+            # (up to 8x, i.e. 4 s with the default 30 steps: GD mistakes are never older than that).
+            margin = focus_margin * min(8, 2 ** ((ep - last_record_ep) // 500)) if focus_margin else None
+            explore_from = max(0, len(best_acts) - margin) if margin and best_acts else 0
+            if verbose and margin and best_acts and prev_margin and margin > prev_margin:
+                print(f"ep. {ep:6d}  no new record for a while: exploring the last {margin} steps")
+            prev_margin = margin
+
             # Starting point: start of the level, or a checkpoint (practice mode)
             step, start = 0, None
             if real_practice:
-                if frontier:
-                    start = frontier[cp_index]
+                # Latest checkpoint at least 30 steps (0.5 s) before the exploration zone
+                limit = explore_from - 30 if margin else len(best_acts) - 60
+                eligible = [c for c in frontier if c.step <= limit]
+                if eligible:
+                    start = eligible[-1]
                     step = start.step
             elif mode == "practice" and checkpoints and random.random() < 0.8:
                 step, start = random.choice(checkpoints[-3:])   # one of the last checkpoints before getting stuck
             env.reset(start_state=start)
-            ep_progress = 0.0
 
             while True:
                 key = make_key(obs_mode, step, env.state)
-                a = random.randint(0, 1) if random.random() < eps else greedy(Q, key)
-                _, r, term, trunc, step_info = env.step(a)
-                ep_progress = step_info["progress"]
+                explore = step >= explore_from and random.random() < eps
+                a = random.randint(0, 1) if explore else greedy(Q, key)
+                _, r, term, trunc, _ = env.step(a)
                 total_sim_steps += 1
                 step += 1
                 nkey = make_key(obs_mode, step, env.state)
@@ -105,16 +129,6 @@ def train(level="stereo_lite", mode="practice", obs_mode="state", episodes=20000
                 Q[key][a] += alpha * (target - Q[key][a])
                 if term or trunc:
                     break
-
-            # Safeguard against an "impossible" checkpoint: move it back if nothing improves
-            if real_practice and frontier:
-                stuck = 0 if ep_progress > best_greedy else stuck + 1
-                if stuck >= stuck_limit and cp_index > 0:
-                    cp_index -= 1
-                    stuck = 0
-                    if verbose:
-                        print(f"ep. {ep:6d}  no progress from this checkpoint: moving it back "
-                              f"(step {frontier[cp_index].step})")
 
             if ep % eval_every == 0:
                 acts, states, info = run_greedy(env, Q, obs_mode)
@@ -125,13 +139,12 @@ def train(level="stereo_lite", mode="practice", obs_mode="state", episodes=20000
                 if new_best:
                     best_greedy = prog
                     best_acts = acts
+                    last_record_ep = ep
                     # Place checkpoints every ~0.5 s along this run, like in practice mode
                     checkpoints = [(i, states[i]) for i in range(0, len(states) - 1, 30)]
                     if real_practice:
                         cands = [env.make_checkpoint(i, acts, states) for i in range(30, len(acts) - 1, 30)]
                         frontier = list(dict.fromkeys(c for c in cands if c is not None))
-                        cp_index = max(0, len(frontier) - 2)     # keep ~0.5-1 s of margin before the death
-                        stuck = 0
                 if verbose and (ep % print_every == 0 or new_best or info["won"]):
                     print(f"ep. {ep:6d}  eps={eps:.3f}  agent progress = {100*prog:5.1f}%  "
                           f"(best {100*best_greedy:5.1f}%)  known states={len(Q)}")
@@ -162,6 +175,8 @@ if __name__ == "__main__":
     p.add_argument("--resume", action="store_true", help="start from the saved Q-table")
     p.add_argument("--resume-from", help="start from this Q-table file (e.g. one trained in normal mode)")
     p.add_argument("--eps-start", type=float, default=0.3, help="initial exploration (lower it when resuming)")
+    p.add_argument("--focus", type=int, default=None,
+                   help="explore only in the last N steps of the best run (default: 30 on the real game, off on the simulator; doubles when stuck)")
     args = p.parse_args()
 
     env = None
@@ -191,7 +206,8 @@ if __name__ == "__main__":
     real = args.env == "real"
     res = train(args.level, args.mode, args.obs, args.episodes, seed=args.seed, env=env,
                 eps_start=args.eps_start, Q_init=Q_init,
-                print_every=200 if real else 1000, save_every=200 if real else None, save_fn=save)
+                print_every=200 if real else 1000, save_every=200 if real else None, save_fn=save,
+                focus_margin=args.focus if args.focus is not None else (30 if real else None))
     save(res["Q"], res["actions"], res["history"])
     print(f"Saved: {qtable_path}, solution_qlearning_{tag}.txt")
     if not res["won"]:

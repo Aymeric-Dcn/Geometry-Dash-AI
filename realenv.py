@@ -51,9 +51,11 @@ class Checkpoint:
             started from the beginning, so the Q-table keys stay consistent)
     prefix: the actions that lead from the start of the level to the checkpoint. The game is
             deterministic, so replaying them always brings the player to the same place.
+    x:      expected position (blocks) right after the respawn, to detect a lost checkpoint
     """
     step: int
     prefix: tuple
+    x: float = 0.0
 
 
 class RealGDEnv:
@@ -170,7 +172,7 @@ class RealGDEnv:
         """
         for k in range(min(step, len(actions) - 1), max(0, step - CHECKPOINT_SEARCH), -1):
             if states[k].grounded and actions[k] == 0:
-                return Checkpoint(step=k + 1, prefix=tuple(actions[:k]))
+                return Checkpoint(step=k + 1, prefix=tuple(actions[:k]), x=states[k + 1].x)
         return None
 
     # --- Gym-like API -------------------------------------------------------------------
@@ -186,9 +188,19 @@ class RealGDEnv:
         else:
             cp = start_state
             self._set_practice(True)
-            if self._active_cp != cp:
-                self._place_checkpoint(cp)
-            self._restart()                              # respawn at the checkpoint
+            for attempt in range(3):
+                if self._active_cp != cp:
+                    self._place_checkpoint(cp)
+                self._restart()                          # respawn at the checkpoint
+                x = (self.raw.x - self._origin[0]) / UNITS_PER_BLOCK
+                if abs(x - cp.x) < 1e-3:
+                    break
+                # Not where we expected: the checkpoint was lost (or the game is not deterministic).
+                # Place it again; if it keeps failing, stop rather than learn from wrong data.
+                self._active_cp = None
+            else:
+                raise RuntimeError(f"Respawn at x={x:.3f} instead of {cp.x:.3f} blocks: "
+                                   "checkpoints are not reproducible on this level")
             self.steps = cp.step
         self.state = self._to_state(self.raw, None)
         return self.obs(), {}
