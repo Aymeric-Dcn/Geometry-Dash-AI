@@ -235,6 +235,14 @@ class $modify(BridgePlayLayer, PlayLayer) {
         PlayLayer::delayedResetLevel();
     }
 
+    // GD pauses the level when its window loses focus (alt-tab). While the agent is playing,
+    // ignore that automatic pause so training keeps running in the background.
+    // A manual pause (Escape) still works: GD calls this with unfocused = false.
+    void pauseGame(bool unfocused) {
+        if (unfocused && bridge::connected()) return;
+        PlayLayer::pauseGame(unfocused);
+    }
+
     // Do not open the end screen while the agent is playing: just remember the win.
     void levelComplete() {
         if (bridge::connected()) {
