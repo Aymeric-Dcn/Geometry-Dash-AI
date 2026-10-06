@@ -53,6 +53,7 @@ unsigned int ourCheckpoints = 0;          // checkpoints placed on the agent's r
 bool trimming = false;                    // true while WE remove checkpoints
 bool waitingForLayer = false;             // a LEVEL command is loading a new level
 PlayLayer* freshLayer = nullptr;          // the PlayLayer created for that new level
+int settleFrames = 0;                     // frames to let a freshly opened level start by itself
 
 bool connected() {
     return client != INVALID_SOCKET;
@@ -203,6 +204,15 @@ class $modify(BridgeScheduler, CCScheduler) {
                 return;
             }
             waitingForLayer = false;
+            // The new PlayLayer exists before the level has really started (its UI is not
+            // there yet): resetting it right away crashed GD in PlayLayer::updateTimeLabel.
+            // Let it run normally for about 1.5 s first.
+            settleFrames = 90;
+        }
+        if (settleFrames > 0) {
+            settleFrames--;
+            CCScheduler::update(dt);
+            return;
         }
         if (!connected() || !pl || pl->m_isPaused) {
             CCScheduler::update(dt);          // no agent: normal game
