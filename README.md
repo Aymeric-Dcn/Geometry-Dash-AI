@@ -9,7 +9,7 @@ everything else, it learns by dying.
 ## Results
 
 **15 of the 22 official levels beaten**, including the two demons tried so far, **Clubstep** and **Deadlocked**.
-Most levels take 3 to 7 minutes of training; Deadlocked took 13.5 minutes.
+Most levels take 3 to 7 minutes of training; the two demons took 13.5 (Deadlocked) and 23 minutes (Clubstep).
 
 ![Is a level hard for the AI when it is hard for humans?](docs/figures/ai_vs_official_difficulty.png)
 

@@ -56,7 +56,7 @@ Généré par `python make_report.py` à partir des logs de `results/` (données
 | Clutterfunk | practice | default | beaten | 4,000 | 800,529 | 5.0 min |  |
 | Theory of Everything | practice | default | beaten | 6,850 | 1,112,616 | 7.5 min | 2 checkpoint(s) set aside |
 | Electroman Adventures | practice | default | beaten | 4,600 | 1,150,451 | 6.5 min |  |
-| Clubstep | practice | default | beaten | 20,100 | — | — | stuck at 70.6% in a tight UFO corridor: the state was too coarse to tell close positions apart; resumed from the best run with a finer state (--obs fine); total time unknown |
+| Clubstep | practice | default | beaten | 16,750 | 2,830,820 | 22.7 min | finer state (--obs fine) |
 | Deadlocked | practice | default | beaten | 9,150 | 2,065,893 | 13.5 min | finer state (--obs fine) |
 
 ![minutes_per_level.png](figures/minutes_per_level.png)
@@ -68,7 +68,7 @@ Levels ranked by the number of attempts (practice mode) the agent needed to beat
 
 | Rank | Level | Official stars | Attempts to beat it | Hardest passage |
 |---|---|---|---|---|
-| 1 | Clubstep | 14 | 17,900* | stuck 4,050 attempts at 71% |
+| 1 | Clubstep | 14 | 16,750 | stuck 1,300 attempts at 83% |
 | 2 | Deadlocked | 15 | 9,150 | stuck 1,500 attempts at 52% |
 | 3 | Theory of Everything | 12 | 6,850 | stuck 1,150 attempts at 81% |
 | 4 | Can't Let Go | 6 | 6,450 | stuck 1,850 attempts at 62% |
@@ -85,8 +85,6 @@ Levels ranked by the number of attempts (practice mode) the agent needed to beat
 | 15 | Base After Base | 5 | 2,500 | stuck 200 attempts at 40% |
 
 Agreement with the official difficulty (Spearman rank correlation, 1 = same order, 0 = unrelated): **0.52** over 15 levels.
-
-\* without the attempts lost to a bug of the training code (see the notes of the results table).
 
 ![ai_vs_official_difficulty.png](figures/ai_vs_official_difficulty.png)
 

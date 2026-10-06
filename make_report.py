@@ -282,26 +282,65 @@ def ranking(runs):
     return "\n".join(lines)
 
 
+def place_labels(fig, ax, points, labels, fontsize=8.5):
+    """Put each label next to its point without overlapping other labels or points: try a few
+    positions around the point (right first) and keep the first free one."""
+    candidates = [(7, -3, "left", "baseline"), (-7, -3, "right", "baseline"), (0, 8, "center", "bottom"),
+                  (0, -8, "center", "top"), (7, 6, "left", "bottom"), (7, -8, "left", "top"),
+                  (-7, 6, "right", "bottom"), (-7, -8, "right", "top")]
+    fig.canvas.draw()
+    renderer = fig.canvas.get_renderer()
+    taken = []
+    for x, y in points:                                     # the markers themselves (about 6 px wide)
+        px, py = ax.transData.transform((x, y))
+        taken.append((px - 6, py - 6, px + 6, py + 6))
+    axes_box = ax.get_window_extent(renderer)
+    for (x, y), label in zip(points, labels):
+        best = None
+        for dx, dy, ha, va in candidates:
+            t = ax.annotate(label, (x, y), xytext=(dx, dy), textcoords="offset points",
+                            fontsize=fontsize, color=INK, ha=ha, va=va)
+            b = t.get_window_extent(renderer).padded(2)
+            box = (b.x0, b.y0, b.x1, b.y1)
+            free = all(box[2] < o[0] or box[0] > o[2] or box[3] < o[1] or box[1] > o[3] for o in taken)
+            inside = b.x0 >= axes_box.x0 and b.x1 <= axes_box.x1 and b.y0 >= axes_box.y0 and b.y1 <= axes_box.y1
+            if free and inside:
+                best = (t, box)
+                break
+            t.remove()
+        if best is None:                                    # no free spot: keep the default position
+            t = ax.annotate(label, (x, y), xytext=(7, -3), textcoords="offset points",
+                            fontsize=fontsize, color=INK)
+            b = t.get_window_extent(renderer)
+            best = (t, (b.x0, b.y0, b.x1, b.y1))
+        taken.append(best[1])
+
+
 def fig_ranking(runs, path):
     rs = beaten_practice(runs)
     if len(rs) < 2:
         return False
-    fig, ax = plt.subplots(figsize=(8.5, 4.6))
+    fig, ax = plt.subplots(figsize=(8.5, 4.8))
     xs = [STARS[r["level"]] for r in rs]
     ys = [r["episodes_adj"] for r in rs]
-    ax.scatter(xs, ys, s=70, color=BLUE, edgecolor="white", linewidth=2, zorder=3)
-    for x, y, r in zip(xs, ys, rs):
-        ax.annotate(NAMES[r["level"]], (x, y), xytext=(7, -3), textcoords="offset points",
-                    fontsize=8.5, color=INK)
+    exact = [r["episodes_adj"] == r["episodes"] for r in rs]
+    ax.scatter([x for x, e in zip(xs, exact) if e], [y for y, e in zip(ys, exact) if e],
+               s=70, color=BLUE, edgecolor="white", linewidth=2, zorder=3, label="one clean run")
+    if not all(exact):
+        ax.scatter([x for x, e in zip(xs, exact) if not e], [y for y, e in zip(ys, exact) if not e],
+                   s=60, facecolor="white", edgecolor=BLUE, linewidth=2, zorder=3,
+                   label="trained in two parts (estimate)")
+        ax.legend(frameon=False, loc="upper left", fontsize=8.5)
     ax.set_xlabel("Official difficulty (stars)", color=INK2)
     ax.set_ylabel("Attempts needed by the AI", color=INK2)
     ax.set_xticks(range(1, max(xs) + 1))
-    ax.set_xlim(0.5, max(xs) + 2.2)
-    ax.set_ylim(0, max(ys) * 1.12)
+    ax.set_xlim(0.3, max(xs) + 2.6)
+    ax.set_ylim(0, max(ys) * 1.15)
     style(ax)
     ax.grid(axis="y", color=GRID, linewidth=0.8)
     ax.set_title("Is a level hard for the AI when it is hard for humans?", fontsize=11, color=INK, loc="left")
     fig.tight_layout()
+    place_labels(fig, ax, list(zip(xs, ys)), [NAMES[r["level"]] for r in rs])
     fig.savefig(path, dpi=140)
     plt.close(fig)
     return True

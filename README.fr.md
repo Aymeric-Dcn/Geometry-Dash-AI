@@ -9,7 +9,7 @@ tout le reste, elle l'apprend en mourant.
 ## Résultats
 
 **15 des 22 niveaux officiels finis**, dont les deux démons tentés pour l'instant, **Clubstep** et **Deadlocked**.
-La plupart des niveaux demandent 3 à 7 minutes d'entraînement ; Deadlocked en a demandé 13,5.
+La plupart des niveaux demandent 3 à 7 minutes d'entraînement ; les deux démons en ont demandé 13,5 (Deadlocked) et 23 (Clubstep).
 
 ![Un niveau difficile pour les humains l'est-il aussi pour l'IA ?](docs/figures/ai_vs_official_difficulty.png)
 

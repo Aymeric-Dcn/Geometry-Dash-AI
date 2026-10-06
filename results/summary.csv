@@ -12,5 +12,5 @@ xstep,practice,default,True,100.0,3900,762972,272.3,,results/xstep/log.txt
 clutterfunk,practice,default,True,100.0,4000,800529,301.2,,results/clutterfunk/log.txt
 theory_of_everything,practice,default,True,100.0,6850,1112616,450.3,,results/theory_of_everything/log.txt
 electroman_adventures,practice,default,True,100.0,4600,1150451,392.8,,results/electroman_adventures/log.txt
-clubstep,practice,default,True,100.0,20100,,,stuck at 70.6% in a tight UFO corridor: the state was too coarse to tell close positions apart; resumed from the best run with a finer state (--obs fine); total time unknown,results/clubstep/log_part2_resume.txt
+clubstep,practice,default,True,100.0,16750,2830820,1362.8,finer state (--obs fine),results/clubstep/log.txt
 deadlocked,practice,default,True,100.0,9150,2065893,809.2,finer state (--obs fine),results/deadlocked/log.txt
