@@ -11,7 +11,10 @@ import sys
 from realenv import GAMEMODES, RealGDEnv
 
 level = sys.argv[1]
-actions = [int(c) for c in open(f"solution_qlearning_{level}_practice_state.txt").read().strip()]
+import os
+path = next(f for f in (f"solution_qlearning_{level}_practice_fine.txt", f"solution_qlearning_{level}_practice_state.txt")
+            if os.path.exists(f))
+actions = [int(c) for c in open(path).read().strip()]
 env = RealGDEnv(speed=20, max_fall=0)
 env.normal_mode()
 out = open(f"diag_stuck_{level}.txt", "w")
