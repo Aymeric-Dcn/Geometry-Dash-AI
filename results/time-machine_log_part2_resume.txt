@@ -1,0 +1,28 @@
+Resuming from qtable_time-machine_practice_state.pkl (26771 known states)
+Resumed agent reaches 70.7% without exploration
+ep.     50  eps=0.300  agent progress =  72.2%  (best  72.2%)  known states=27474
+ep.    100  eps=0.300  agent progress =  74.0%  (best  74.0%)  known states=28086
+ep.    150  eps=0.300  agent progress =  75.6%  (best  75.6%)  known states=28411
+ep.    200  eps=0.299  agent progress =  75.7%  (best  75.7%)  known states=28723
+ep.    250  eps=0.299  agent progress =  76.7%  (best  76.7%)  known states=29285
+ep.    300  eps=0.299  agent progress =  80.8%  (best  80.8%)  known states=29742
+ep.    350  eps=0.299  agent progress =  84.9%  (best  84.9%)  known states=30109
+ep.    400  eps=0.299  agent progress =  86.2%  (best  86.2%)  known states=30508
+ep.    450  eps=0.299  agent progress =  87.6%  (best  87.6%)  known states=30921
+ep.    500  eps=0.298  agent progress =  90.1%  (best  90.1%)  known states=31350
+ep.    550  eps=0.298  agent progress =  90.9%  (best  90.9%)  known states=31718
+ep.    600  eps=0.298  agent progress =  90.9%  (best  90.9%)  known states=31847
+ep.    650  eps=0.298  agent progress =  93.2%  (best  93.2%)  known states=32128
+ep.    700  eps=0.298  agent progress =  94.0%  (best  94.0%)  known states=34137
+ep.    750  eps=0.298  agent progress =  95.5%  (best  95.5%)  known states=35046
+ep.    800  eps=0.298  agent progress =  95.0%  (best  95.5%)  known states=35127
+ep.    950  eps=0.297  agent progress =  96.3%  (best  96.3%)  known states=36606
+ep.   1000  eps=0.297  agent progress =  97.7%  (best  97.7%)  known states=37571
+ep.   1200  eps=0.296  agent progress =  97.7%  (best  97.7%)  known states=37655
+ep.   1400  eps=0.296  agent progress =  97.7%  (best  97.7%)  known states=37819
+ep.   1500  no new record for a while: exploring the last 60 steps
+ep.   1550  eps=0.295  agent progress =  97.8%  (best  97.8%)  known states=38478
+ep.   1600  eps=0.295  agent progress = 100.0%  (best 100.0%)  known states=39521
+
+>>> LEVEL BEATEN after 1600 episodes, 312681 steps simulated, 134.7s
+Saved: qtable_time-machine_practice_state.pkl, solution_qlearning_time-machine_practice_state.txt

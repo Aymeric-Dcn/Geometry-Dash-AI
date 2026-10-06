@@ -1,0 +1,79 @@
+PS C:\Projects\Geometry-Dash-AI> python -u train_qlearning.py --env real --level time-machine --episodes 200000 2>&1 | Tee-Object -FilePath train_log_time-machine.txt
+Waiting for the game... (open a level in GD and make sure it is not paused)
+ep.     50  eps=0.300  agent progress =   2.0%  (best   2.0%)  known states=2358
+ep.    100  eps=0.300  agent progress =   3.1%  (best   3.1%)  known states=2625
+ep.    200  eps=0.299  agent progress =   3.1%  (best   3.1%)  known states=2625
+ep.    400  eps=0.299  agent progress =   3.2%  (best   3.2%)  known states=2656
+ep.    500  eps=0.298  agent progress =   3.2%  (best   3.2%)  known states=2687
+ep.    600  eps=0.298  agent progress =   3.1%  (best   3.2%)  known states=2687
+ep.    800  eps=0.298  agent progress =   3.2%  (best   3.2%)  known states=2749
+ep.   1000  no new record for a while: exploring the last 60 steps
+ep.   1000  eps=0.297  agent progress =   3.1%  (best   3.2%)  known states=2780
+ep.   1200  eps=0.296  agent progress =   3.1%  (best   3.2%)  known states=2859
+ep.   1300  eps=0.296  agent progress =   5.9%  (best   5.9%)  known states=3308
+ep.   1350  eps=0.296  agent progress =   6.9%  (best   6.9%)  known states=3502
+ep.   1400  eps=0.296  agent progress =   8.6%  (best   8.6%)  known states=3745
+ep.   1450  eps=0.296  agent progress =   8.6%  (best   8.6%)  known states=3856
+ep.   1500  eps=0.295  agent progress =   9.3%  (best   9.3%)  known states=3986
+ep.   1550  eps=0.295  agent progress =  11.4%  (best  11.4%)  known states=4231
+ep.   1600  eps=0.295  agent progress =  16.1%  (best  16.1%)  known states=4805
+ep.   1700  eps=0.295  agent progress =  16.7%  (best  16.7%)  known states=5174
+ep.   1750  eps=0.295  agent progress =  16.8%  (best  16.8%)  known states=5401
+ep.   1800  eps=0.295  agent progress =  17.0%  (best  17.0%)  known states=5516
+ep.   1900  eps=0.294  agent progress =  18.4%  (best  18.4%)  known states=5774
+ep.   1950  eps=0.294  agent progress =  18.6%  (best  18.6%)  known states=6046
+ep.   2000  eps=0.294  agent progress =  18.6%  (best  18.6%)  known states=6129
+ep.   2050  eps=0.294  agent progress =  20.2%  (best  20.2%)  known states=6260
+ep.   2100  eps=0.294  agent progress =  21.8%  (best  21.8%)  known states=6597
+ep.   2150  eps=0.294  agent progress =  25.4%  (best  25.4%)  known states=6904
+ep.   2200  eps=0.293  agent progress =  28.3%  (best  28.3%)  known states=7395
+ep.   2300  eps=0.293  agent progress =  28.4%  (best  28.4%)  known states=7402
+ep.   2400  eps=0.293  agent progress =  28.4%  (best  28.4%)  known states=7433
+ep.   2500  eps=0.292  agent progress =  29.9%  (best  29.9%)  known states=7634
+ep.   2550  eps=0.292  agent progress =  31.4%  (best  31.4%)  known states=7870
+ep.   2600  eps=0.292  agent progress =  34.8%  (best  34.8%)  known states=8750
+ep.   2650  eps=0.292  agent progress =  36.9%  (best  36.9%)  known states=9885
+ep.   2700  eps=0.292  agent progress =  37.0%  (best  37.0%)  known states=10509
+ep.   2750  eps=0.292  agent progress =  37.9%  (best  37.9%)  known states=11078
+ep.   2800  eps=0.292  agent progress =  38.7%  (best  38.7%)  known states=12028
+ep.   2850  eps=0.291  agent progress =  39.2%  (best  39.2%)  known states=13346
+ep.   2900  eps=0.291  agent progress =  39.4%  (best  39.4%)  known states=13768
+ep.   2950  eps=0.291  agent progress =  39.7%  (best  39.7%)  known states=14160
+ep.   3000  eps=0.291  agent progress =  40.3%  (best  40.3%)  known states=14907
+ep.   3050  eps=0.291  agent progress =  41.1%  (best  41.1%)  known states=15576
+ep.   3100  eps=0.291  agent progress =  41.5%  (best  41.5%)  known states=16490
+ep.   3150  eps=0.291  agent progress =  41.9%  (best  41.9%)  known states=16883
+ep.   3200  eps=0.290  agent progress =  42.0%  (best  42.0%)  known states=17724
+ep.   3250  eps=0.290  agent progress =  42.4%  (best  42.4%)  known states=18565
+ep.   3300  eps=0.290  agent progress =  43.3%  (best  43.3%)  known states=19498
+ep.   3350  eps=0.290  agent progress =  45.4%  (best  45.4%)  known states=20858
+ep.   3400  eps=0.290  agent progress =  47.2%  (best  47.2%)  known states=21287
+ep.   3450  eps=0.290  agent progress =  47.7%  (best  47.7%)  known states=21391
+ep.   3500  eps=0.289  agent progress =  51.1%  (best  51.1%)  known states=21821
+ep.   3550  eps=0.289  agent progress =  57.4%  (best  57.4%)  known states=22721
+ep.   3600  eps=0.289  agent progress =  59.0%  (best  59.0%)  known states=23762
+ep.   3650  eps=0.289  agent progress =  59.8%  (best  59.8%)  known states=24110
+ep.   3700  eps=0.289  agent progress =  63.5%  (best  63.5%)  known states=24664
+ep.   3750  eps=0.289  agent progress =  66.6%  (best  66.6%)  known states=25383
+ep.   3800  eps=0.289  agent progress =  70.7%  (best  70.7%)  known states=26771
+ep.   3850  eps=0.288  agent progress =  73.8%  (best  73.8%)  known states=27178
+python : Traceback (most recent call last):
+At line:1 char:1
++ python -u train_qlearning.py --env real --level time-machine --episod ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (Traceback (most recent call last)::String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+
+  File "C:\Projects\Geometry-Dash-AI\train_qlearning.py", line 294, in <module>
+    res = train(args.level, args.mode, args.obs, args.episodes, seed=args.seed, env=env,
+                eps_start=args.eps_start, Q_init=Q_init,
+    ...<2 lines>...
+                explore_budget=args.explore_budget, explore_hold=not args.no_hold,
+                reverse_replay=not args.no_reverse, seed_actions=seed_actions)
+  File "C:\Projects\Geometry-Dash-AI\train_qlearning.py", line 158, in train
+    env.reset(start_state=start)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "C:\Projects\Geometry-Dash-AI\realenv.py", line 212, in reset
+    raise RuntimeError(f"Respawn at x={x:.3f}, y={y:.3f} instead of {cp.x:.3f}, {cp.y:.3f} blocks: "
+                       "checkpoints are not reproducible on this level")
+RuntimeError: Respawn at x=715.373, y=2.000 instead of 711.407, 2.000 blocks: checkpoints are not reproducible on this

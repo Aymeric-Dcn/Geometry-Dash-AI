@@ -1,0 +1,34 @@
+ep.     50  eps=0.300  agent progress =   4.9%  (best   4.9%)  known states=1737
+ep.    100  eps=0.300  agent progress =   8.9%  (best   8.9%)  known states=2678
+ep.    200  eps=0.299  agent progress =  15.5%  (best  15.5%)  known states=3890
+ep.    400  eps=0.299  agent progress =  15.5%  (best  15.5%)  known states=3890
+ep.    600  eps=0.298  agent progress =  15.5%  (best  15.5%)  known states=3890
+ep.    700  no new record for a while: exploring the last 60 steps
+ep.    800  eps=0.298  agent progress =  15.5%  (best  15.5%)  known states=3890
+ep.   1000  eps=0.297  agent progress =  15.5%  (best  15.5%)  known states=3890
+ep.   1200  no new record for a while: exploring the last 120 steps
+ep.   1200  eps=0.296  agent progress =  15.5%  (best  15.5%)  known states=3890
+ep.   1400  eps=0.296  agent progress =  15.5%  (best  15.5%)  known states=3890
+ep.   1600  eps=0.295  agent progress =  15.5%  (best  15.5%)  known states=3890
+ep.   1700  no new record for a while: exploring the last 240 steps
+ep.   1800  eps=0.295  agent progress =  15.5%  (best  15.5%)  known states=3987
+ep.   2000  eps=0.294  agent progress =  15.5%  (best  15.5%)  known states=4272
+ep.   2200  no new record for a while: exploring the last 240 steps, holds up to 60 steps
+ep.   2200  eps=0.293  agent progress =  15.5%  (best  15.5%)  known states=4359
+ep.   2400  eps=0.293  agent progress =  15.5%  (best  15.5%)  known states=4478
+ep.   2600  eps=0.292  agent progress =  15.5%  (best  15.5%)  known states=4548
+ep.   2700  no new record for a while: exploring the last 240 steps, holds up to 120 steps
+ep.   2800  eps=0.292  agent progress =  15.5%  (best  15.5%)  known states=4678
+ep.   3000  eps=0.291  agent progress =  15.5%  (best  15.5%)  known states=4765
+ep.   3200  no new record for a while: exploring the last 240 steps, holds up to 240 steps
+ep.   3200  eps=0.290  agent progress =  15.5%  (best  15.5%)  known states=4845
+ep.   3400  eps=0.290  agent progress =  15.5%  (best  15.5%)  known states=4881
+ep.   3600  eps=0.289  agent progress =  15.5%  (best  15.5%)  known states=4948
+ep.   3800  eps=0.289  agent progress =  15.5%  (best  15.5%)  known states=5120
+ep.   4000  eps=0.288  agent progress =  15.5%  (best  15.5%)  known states=5166
+ep.   4200  eps=0.287  agent progress =  15.5%  (best  15.5%)  known states=5246
+ep.   4400  eps=0.287  agent progress =  15.5%  (best  15.5%)  known states=5372
+ep.   4600  eps=0.286  agent progress =  15.5%  (best  15.5%)  known states=5436
+ep.   4800  eps=0.286  agent progress =  15.5%  (best  15.5%)  known states=5544
+
+Stopped by the user after 4968 episodes.

@@ -1,0 +1,53 @@
+Waiting for the game... (open a level in GD and make sure it is not paused)
+ep.     50  eps=0.300  agent progress =   8.9%  (best   8.9%)  known states=3809
+ep.    100  eps=0.300  agent progress =  11.5%  (best  11.5%)  known states=4995
+ep.    150  eps=0.300  agent progress =  14.8%  (best  14.8%)  known states=5565
+ep.    200  eps=0.299  agent progress =  17.3%  (best  17.3%)  known states=6741
+ep.    250  eps=0.299  agent progress =  17.4%  (best  17.4%)  known states=7208
+ep.    300  eps=0.299  agent progress =  23.4%  (best  23.4%)  known states=7784
+ep.    350  eps=0.299  agent progress =  25.9%  (best  25.9%)  known states=8634
+ep.    400  eps=0.299  agent progress =  29.3%  (best  29.3%)  known states=9375
+ep.    450  eps=0.299  agent progress =  35.2%  (best  35.2%)  known states=13045
+ep.    500  eps=0.298  agent progress =  36.1%  (best  36.1%)  known states=14687
+ep.    600  eps=0.298  agent progress =  36.1%  (best  36.1%)  known states=16610
+ep.    800  eps=0.298  agent progress =  36.1%  (best  36.1%)  known states=20764
+ep.   1000  no new record for a while: exploring the last 60 steps
+ep.   1000  eps=0.297  agent progress =  36.1%  (best  36.1%)  known states=23878
+ep.   1200  eps=0.296  agent progress =  36.1%  (best  36.1%)  known states=28302
+ep.   1400  eps=0.296  agent progress =  36.1%  (best  36.1%)  known states=33239
+ep.   1500  no new record for a while: exploring the last 60 steps
+ep.   1500  eps=0.295  agent progress =  40.9%  (best  40.9%)  known states=36446
+ep.   1600  eps=0.295  agent progress =  45.3%  (best  45.3%)  known states=38582
+ep.   1650  eps=0.295  agent progress =  48.9%  (best  48.9%)  known states=39426
+ep.   1750  eps=0.295  agent progress =  50.5%  (best  50.5%)  known states=39951
+ep.   1800  eps=0.295  agent progress =  52.9%  (best  52.9%)  known states=40435
+ep.   1850  eps=0.294  agent progress =  60.2%  (best  60.2%)  known states=42074
+ep.   1900  eps=0.294  agent progress =  64.0%  (best  64.0%)  known states=43418
+ep.   1950  eps=0.294  agent progress =  64.1%  (best  64.1%)  known states=43635
+ep.   2000  eps=0.294  agent progress =  65.8%  (best  65.8%)  known states=43816
+ep.   2050  eps=0.294  agent progress =  68.9%  (best  68.9%)  known states=44736
+ep.   2100  eps=0.294  agent progress =  69.7%  (best  69.7%)  known states=44776
+ep.   2150  eps=0.294  agent progress =  72.4%  (best  72.4%)  known states=45132
+ep.   2200  eps=0.293  agent progress =  75.1%  (best  75.1%)  known states=46102
+ep.   2300  eps=0.293  agent progress =  75.4%  (best  75.4%)  known states=46177
+ep.   2400  eps=0.293  agent progress =  78.4%  (best  78.4%)  known states=46697
+ep.   2450  eps=0.293  agent progress =  81.3%  (best  81.3%)  known states=47204
+ep.   2500  eps=0.292  agent progress =  84.1%  (best  84.1%)  known states=48139
+ep.   2600  eps=0.292  agent progress =  84.4%  (best  84.4%)  known states=48345
+ep.   2800  eps=0.292  agent progress =  84.2%  (best  84.4%)  known states=48345
+ep.   2850  eps=0.291  agent progress =  87.3%  (best  87.3%)  known states=49606
+ep.   2900  eps=0.291  agent progress =  90.7%  (best  90.7%)  known states=51214
+ep.   2950  eps=0.291  agent progress =  92.8%  (best  92.8%)  known states=53307
+ep.   3000  eps=0.291  agent progress =  93.3%  (best  93.3%)  known states=54549
+ep.   3100  eps=0.291  agent progress =  95.2%  (best  95.2%)  known states=57254
+ep.   3200  eps=0.290  agent progress =  95.2%  (best  95.2%)  known states=57346
+ep.   3400  eps=0.290  agent progress =  95.2%  (best  95.2%)  known states=57519
+ep.   3600  no new record for a while: exploring the last 60 steps
+ep.   3600  eps=0.289  agent progress =  95.2%  (best  95.2%)  known states=57632
+ep.   3800  eps=0.289  agent progress =  95.2%  (best  95.2%)  known states=61068
+ep.   4000  eps=0.288  agent progress =  95.2%  (best  95.2%)  known states=64354
+ep.   4100  no new record for a while: exploring the last 120 steps
+ep.   4150  eps=0.288  agent progress = 100.0%  (best 100.0%)  known states=66834
+
+>>> LEVEL BEATEN after 4150 episodes, 749552 steps simulated, 286.8s
+Saved: qtable_stereo_madness_practice_state.pkl, solution_qlearning_stereo_madness_practice_state.txt

@@ -1,0 +1,57 @@
+Waiting for the game... (open a level in GD and make sure it is not paused)
+ep.     50  eps=0.300  agent progress =   5.7%  (best   5.7%)  known states=1966
+ep.    100  eps=0.300  agent progress =   7.8%  (best   7.8%)  known states=2563
+ep.    150  eps=0.300  agent progress =   8.7%  (best   8.7%)  known states=2837
+ep.    200  eps=0.299  agent progress =   8.7%  (best   8.7%)  known states=2860
+ep.    300  eps=0.299  agent progress =  12.4%  (best  12.4%)  known states=3665
+ep.    350  eps=0.299  agent progress =  13.8%  (best  13.8%)  known states=4384
+ep.    400  eps=0.299  agent progress =  14.1%  (best  14.1%)  known states=5904
+ep.    450  eps=0.299  agent progress =  16.3%  (best  16.3%)  known states=7595
+ep.    500  eps=0.298  agent progress =  20.4%  (best  20.4%)  known states=8551
+ep.    550  eps=0.298  agent progress =  28.9%  (best  28.9%)  known states=9677
+ep.    600  eps=0.298  agent progress =  30.5%  (best  30.5%)  known states=11665
+ep.    700  eps=0.298  agent progress =  34.0%  (best  34.0%)  known states=14491
+ep.    750  eps=0.298  agent progress =  35.8%  (best  35.8%)  known states=15575
+ep.    800  eps=0.298  agent progress =  35.8%  (best  35.8%)  known states=15728
+ep.   1000  eps=0.297  agent progress =  35.8%  (best  35.8%)  known states=16558
+ep.   1200  eps=0.296  agent progress =  35.8%  (best  35.8%)  known states=16961
+ep.   1250  no new record for a while: exploring the last 60 steps
+ep.   1400  eps=0.296  agent progress =  35.8%  (best  35.8%)  known states=17099
+ep.   1500  eps=0.295  agent progress =  40.7%  (best  40.7%)  known states=17436
+ep.   1550  eps=0.295  agent progress =  45.5%  (best  45.5%)  known states=18406
+ep.   1600  eps=0.295  agent progress =  48.6%  (best  48.6%)  known states=19472
+ep.   1650  eps=0.295  agent progress =  51.3%  (best  51.3%)  known states=20047
+ep.   1750  eps=0.295  agent progress =  54.0%  (best  54.0%)  known states=20846
+ep.   1800  eps=0.295  agent progress =  54.5%  (best  54.5%)  known states=21919
+ep.   1850  eps=0.294  agent progress =  54.6%  (best  54.6%)  known states=22786
+ep.   1900  eps=0.294  agent progress =  56.3%  (best  56.3%)  known states=24199
+ep.   2000  eps=0.294  agent progress =  56.4%  (best  56.4%)  known states=24592
+ep.   2100  eps=0.294  agent progress =  56.9%  (best  56.9%)  known states=25308
+ep.   2150  eps=0.294  agent progress =  57.5%  (best  57.5%)  known states=26027
+ep.   2200  eps=0.293  agent progress =  60.0%  (best  60.0%)  known states=26920
+ep.   2250  eps=0.293  agent progress =  63.2%  (best  63.2%)  known states=27235
+ep.   2400  eps=0.293  agent progress =  63.2%  (best  63.2%)  known states=27235
+ep.   2600  eps=0.292  agent progress =  63.2%  (best  63.2%)  known states=27235
+ep.   2750  no new record for a while: exploring the last 60 steps
+ep.   2800  eps=0.292  agent progress =  63.2%  (best  63.2%)  known states=27235
+ep.   3000  eps=0.291  agent progress =  63.2%  (best  63.2%)  known states=27235
+ep.   3200  eps=0.290  agent progress =  63.2%  (best  63.2%)  known states=27235
+ep.   3250  no new record for a while: exploring the last 120 steps
+ep.   3400  eps=0.290  agent progress =  63.2%  (best  63.2%)  known states=27235
+ep.   3600  eps=0.289  agent progress =  63.2%  (best  63.2%)  known states=27235
+ep.   3750  no new record for a while: exploring the last 240 steps
+ep.   3800  eps=0.289  agent progress =  63.2%  (best  63.2%)  known states=27263
+ep.   4000  eps=0.288  agent progress =  63.2%  (best  63.2%)  known states=27329
+ep.   4200  eps=0.287  agent progress =  63.2%  (best  63.2%)  known states=27350
+ep.   4250  no new record for a while: exploring the last 240 steps, holds up to 60 steps
+ep.   4400  eps=0.287  agent progress =  63.2%  (best  63.2%)  known states=27379
+ep.   4600  eps=0.286  agent progress =  63.2%  (best  63.2%)  known states=27410
+ep.   4750  no new record for a while: exploring the last 240 steps, holds up to 120 steps
+ep.   4800  eps=0.286  agent progress =  63.2%  (best  63.2%)  known states=27421
+ep.   5000  eps=0.285  agent progress =  63.2%  (best  63.2%)  known states=27421
+ep.   5200  eps=0.284  agent progress =  63.2%  (best  63.2%)  known states=27433
+ep.   5250  no new record for a while: exploring the last 240 steps, holds up to 240 steps
+ep.   5400  eps=0.284  agent progress =  63.2%  (best  63.2%)  known states=27450
+ep.   5600  eps=0.283  agent progress =  63.2%  (best  63.2%)  known states=27460
+ep.   5800  eps=0.283  agent progress =  63.2%  (best  63.2%)  known states=27460
+

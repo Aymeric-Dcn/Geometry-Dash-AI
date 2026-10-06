@@ -1,0 +1,51 @@
+Waiting for the game... (open a level in GD and make sure it is not paused)
+ep.     50  eps=0.300  agent progress =   6.0%  (best   6.0%)  known states=2204
+ep.    100  eps=0.300  agent progress =  10.1%  (best  10.1%)  known states=2913
+ep.    200  eps=0.299  agent progress =  10.1%  (best  10.1%)  known states=3271
+ep.    250  eps=0.299  agent progress =  12.8%  (best  12.8%)  known states=3632
+ep.    300  eps=0.299  agent progress =  15.4%  (best  15.4%)  known states=4399
+ep.    350  eps=0.299  agent progress =  18.7%  (best  18.7%)  known states=4707
+ep.    400  eps=0.299  agent progress =  24.0%  (best  24.0%)  known states=5801
+ep.    450  eps=0.299  agent progress =  27.4%  (best  27.4%)  known states=6505
+ep.    500  eps=0.298  agent progress =  34.7%  (best  34.7%)  known states=7813
+ep.    550  eps=0.298  agent progress =  34.7%  (best  34.7%)  known states=8041
+ep.    600  eps=0.298  agent progress =  40.1%  (best  40.1%)  known states=9084
+ep.    650  eps=0.298  agent progress =  44.6%  (best  44.6%)  known states=10531
+ep.    700  eps=0.298  agent progress =  49.0%  (best  49.0%)  known states=10766
+ep.    800  eps=0.298  agent progress =  49.0%  (best  49.0%)  known states=10766
+ep.    850  eps=0.297  agent progress =  53.1%  (best  53.1%)  known states=13077
+ep.    900  eps=0.297  agent progress =  56.4%  (best  56.4%)  known states=16633
+ep.    950  eps=0.297  agent progress =  59.4%  (best  59.4%)  known states=17463
+ep.   1000  eps=0.297  agent progress =  59.5%  (best  59.5%)  known states=18485
+ep.   1100  eps=0.297  agent progress =  61.2%  (best  61.2%)  known states=21791
+ep.   1150  eps=0.297  agent progress =  61.3%  (best  61.3%)  known states=22299
+ep.   1200  eps=0.296  agent progress =  61.3%  (best  61.3%)  known states=22655
+ep.   1300  eps=0.296  agent progress =  63.6%  (best  63.6%)  known states=23620
+ep.   1400  eps=0.296  agent progress =  63.6%  (best  63.6%)  known states=26442
+ep.   1600  eps=0.295  agent progress =  63.6%  (best  63.6%)  known states=34407
+ep.   1800  no new record for a while: exploring the last 60 steps
+ep.   1800  eps=0.295  agent progress =  64.2%  (best  64.2%)  known states=40067
+ep.   2000  eps=0.294  agent progress =  64.2%  (best  64.2%)  known states=44501
+ep.   2100  eps=0.294  agent progress =  64.2%  (best  64.2%)  known states=45615
+ep.   2200  eps=0.293  agent progress =  64.2%  (best  64.2%)  known states=46714
+ep.   2400  eps=0.293  agent progress =  64.2%  (best  64.2%)  known states=48554
+ep.   2600  no new record for a while: exploring the last 60 steps
+ep.   2600  eps=0.292  agent progress =  64.2%  (best  64.2%)  known states=49737
+ep.   2800  eps=0.292  agent progress =  64.2%  (best  64.2%)  known states=50833
+ep.   3000  eps=0.291  agent progress =  64.2%  (best  64.2%)  known states=51434
+ep.   3100  no new record for a while: exploring the last 120 steps
+ep.   3200  eps=0.290  agent progress =  63.5%  (best  64.2%)  known states=53215
+ep.   3350  eps=0.290  agent progress =  78.5%  (best  78.5%)  known states=54604
+ep.   3400  eps=0.290  agent progress =  81.2%  (best  81.2%)  known states=55200
+ep.   3450  eps=0.290  agent progress =  82.0%  (best  82.0%)  known states=55386
+ep.   3500  eps=0.289  agent progress =  82.4%  (best  82.4%)  known states=55512
+ep.   3550  eps=0.289  agent progress =  86.7%  (best  86.7%)  known states=56962
+ep.   3600  eps=0.289  agent progress =  86.7%  (best  86.7%)  known states=57196
+ep.   3650  eps=0.289  agent progress =  89.4%  (best  89.4%)  known states=57700
+ep.   3700  eps=0.289  agent progress =  90.4%  (best  90.4%)  known states=57821
+ep.   3800  eps=0.289  agent progress =  94.4%  (best  94.4%)  known states=58610
+ep.   3900  eps=0.288  agent progress =  94.9%  (best  94.9%)  known states=58697
+ep.   3950  eps=0.288  agent progress = 100.0%  (best 100.0%)  known states=59500
+
+>>> LEVEL BEATEN after 3950 episodes, 1062140 steps simulated, 362.2s
+Saved: qtable_back_on_track_practice_state.pkl, solution_qlearning_back_on_track_practice_state.txt

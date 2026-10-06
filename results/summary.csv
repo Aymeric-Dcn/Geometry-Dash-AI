@@ -1,0 +1,10 @@
+level,episodes,steps_played,seconds,win_actions,notes
+Stereo Madness,1350,201000,99.4,5111,development run: many settings changed; only the last resumed segment is timed
+Back on Track,3950,1062140,362.2,4850,
+Polargeist,2600,457379,166.9,5350,
+Dry Out,5150,848323,331.8,4831,
+Base After Base,2500,486299,175.0,4975,
+Can't Let Go,6450,906805,365.9,4791,
+Jumper,5350,779569,281.9,5136,
+Time Machine,1600,312681,134.7,5689,crashed at 73.8% (checkpoint not reproducible) then resumed; times are for the resumed part only (first part: 3850 episodes)
+Cycles,2950,525806,185.5,4705,
