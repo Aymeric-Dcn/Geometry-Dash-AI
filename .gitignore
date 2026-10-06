@@ -9,3 +9,14 @@ qtable_*.pkl
 train_log*.txt
 solution_qlearning_real_*.txt
 greedy_run.txt
+videos/
+*.mp4
+*.mkv
+# training logs and best runs in progress (finished runs are copied to results/)
+train_*.txt
+solution_qlearning_*.txt
+backup_*/
+# debugging outputs and file transfers
+diag_*.txt
+*.tgz
+tq.new

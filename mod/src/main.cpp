@@ -14,6 +14,7 @@
 //   PRACTICE 1 | PRACTICE 0      OK      (enter / leave practice mode)
 //   CHECKPOINT                   OK n    (place a checkpoint here; n = number of checkpoints)
 //   CLEARCP                      OK      (remove all checkpoints: RESET goes back to the start)
+//   LEVEL id                     OK      (open official level `id`: 1 = Stereo Madness ... 22 = Dash)
 //
 // In practice mode, RESET respawns at the last checkpoint placed with CHECKPOINT. The checkpoints
 // GD places by itself (auto-checkpoints) are removed as soon as they appear.
@@ -50,6 +51,8 @@ bool holding = false;                     // is the jump button currently held b
 bool won = false;
 unsigned int ourCheckpoints = 0;          // checkpoints placed on the agent's request
 bool trimming = false;                    // true while WE remove checkpoints
+bool waitingForLayer = false;             // a LEVEL command is loading a new level
+PlayLayer* freshLayer = nullptr;          // the PlayLayer created for that new level
 
 bool connected() {
     return client != INVALID_SOCKET;
@@ -193,6 +196,14 @@ class $modify(BridgeScheduler, CCScheduler) {
         tryAccept();
 
         auto pl = PlayLayer::get();
+        if (waitingForLayer) {
+            // After a LEVEL command: let the game run normally until the new level exists
+            if (!freshLayer || pl != freshLayer) {
+                CCScheduler::update(dt);
+                return;
+            }
+            waitingForLayer = false;
+        }
         if (!connected() || !pl || pl->m_isPaused) {
             CCScheduler::update(dt);          // no agent: normal game
             return;
@@ -255,6 +266,24 @@ class $modify(BridgeScheduler, CCScheduler) {
                     }
                 }
             }
+            else if (line.rfind("LEVEL", 0) == 0) {
+                int id = std::atoi(line.c_str() + 5);
+                auto level = GameLevelManager::sharedState()->getMainLevel(id, false);
+                if (!level || id < 1) {
+                    reply = "E unknown level\n";
+                } else {
+                    releaseButton(pl);
+                    ourCheckpoints = 0;
+                    won = false;
+                    waitingForLayer = true;
+                    freshLayer = nullptr;
+                    CCDirector::sharedDirector()->replaceScene(PlayLayer::scene(level, false, false));
+                    // The current level is going away: answer, then stop handling commands until
+                    // the new level is ready (see the top of this function).
+                    if (!sendLine("OK\n")) dropClient(pl);
+                    return;
+                }
+            }
             else if (line == "CLEARCP") {
                 ourCheckpoints = 0;
                 trimCheckpoints(pl);
@@ -280,6 +309,13 @@ class $modify(BridgeScheduler, CCScheduler) {
 };
 
 class $modify(BridgePlayLayer, PlayLayer) {
+    // Remember the PlayLayer created after a LEVEL command, to know when the new level is ready
+    bool init(GJGameLevel* level, bool useReplay, bool dontCreateObjects) {
+        if (!PlayLayer::init(level, useReplay, dontCreateObjects)) return false;
+        if (bridge::waitingForLayer) bridge::freshLayer = this;
+        return true;
+    }
+
     // After a death GD schedules its own restart about 1 s later. The agent restarts the
     // level itself, so this delayed restart would hit in the middle of the next attempt.
     void delayedResetLevel() {

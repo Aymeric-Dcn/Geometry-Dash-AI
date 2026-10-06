@@ -39,6 +39,7 @@ class PlayerState:
     dead: bool = False
     won: bool = False
     tick: int = 0
+    mode: int = 0          # game mode (real game only: 0 cube, 1 ship, 3 UFO...)
 
 
 class Level:

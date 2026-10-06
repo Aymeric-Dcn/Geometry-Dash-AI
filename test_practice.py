@@ -5,6 +5,9 @@ Open a level in GD (Stereo Madness), stop any training, then:
     python test_practice.py                     # uses a simple run (no jump until the first death)
     python test_practice.py solution_qlearning_real_normal_state.txt   # uses a saved run (longer test)
 
+On levels with special sections (gravity portals, ships...), use a saved run that goes through
+them, so that checkpoints are tested there too.
+
 The key question: does restarting from a checkpoint reproduce EXACTLY the original run?
 If it does not, the Q-table would learn from situations that change at every attempt.
 """
@@ -94,7 +97,21 @@ env.reset(start_state=cp)
 d = max(abs(env.raw.x - ref_raw[cp.step].x), abs(env.raw.y - ref_raw[cp.step].y))
 check("still respawning at OUR checkpoint", d < 1e-3, f"diff = {d:.5f}")
 
-print("\n5. Back to the start of the level")
+print("\n5. Checkpoints all along the run (e.g. inside upside-down or ship sections)")
+for frac in (0.2, 0.4, 0.8):
+    c = env.make_checkpoint(int(len(actions) * frac), actions, ref_states)
+    if c is None:
+        print(f"  [--] no checkpoint position near {int(frac * 100)}% of the run (cube never on the ground there)")
+        continue
+    try:
+        env.reset(start_state=c)
+        diff, n, _ = compare(env, actions, ref_raw, c.step)
+        check(f"checkpoint at {int(frac * 100)}% of the run (step {c.step}): identical",
+              diff < 1e-3, f"diff = {diff:.5f} over {n} steps")
+    except RuntimeError as e:
+        check(f"checkpoint at {int(frac * 100)}% of the run", False, str(e))
+
+print("\n6. Back to the start of the level")
 env.reset()
 d = max(abs(env.raw.x - ref_raw[0].x), abs(env.raw.y - ref_raw[0].y))
 check("reset() without checkpoint goes back to the start", d < 1e-3, f"diff = {d:.5f}")

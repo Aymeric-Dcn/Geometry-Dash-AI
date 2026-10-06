@@ -1,8 +1,17 @@
-# Geometry Dash AI — Step 0: mini simulator + blind agent
+# Geometry Dash AI — a blind reinforcement learning agent
 
 🇬🇧 [English](#english) · 🇫🇷 [Français](#français)
 
 ![Blind agent beating the level](solution_qlearning_stereo_lite_practice_state.gif)
+
+## Results / Résultats
+
+**9 official levels beaten** (Stereo Madness → Cycles) in the real game by an agent that **never sees the obstacles**, most of them in under 6 minutes of training each.
+**9 niveaux officiels finis** (de Stereo Madness à Cycles) dans le vrai jeu par une IA qui **ne voit jamais les obstacles**, la plupart en moins de 6 minutes d'entraînement chacun.
+
+![Training time per level](docs/figures/minutes_per_level.png)
+
+Method, all numbers and learning curves / Méthode, tous les chiffres et courbes : **[docs/RESULTS.md](docs/RESULTS.md)**
 
 ---
 
@@ -33,6 +42,10 @@ pip install -r requirements.txt
 | `test_bridge.py` | Checks the connection with the real game |
 | `test_practice.py` | Checks practice mode (checkpoints) on the real game |
 | `diag_bridge.py` | Step-by-step trace of the start of an attempt (debugging) |
+| `diag_practice.py` | Compares replays in normal and practice mode (debugging) |
+| `play_greedy.py` / `watch_best.py` | Watch the trained agent / a saved run in real time |
+| `run_batch.py` | Trains on several official levels in a row, opening each one automatically (mod v0.4.0+) |
+| `make_report.py` | Rebuilds `docs/RESULTS.md`, the figures and `results/summary_all.csv` from the logs |
 | `mod/` | The Geode mod (C++) |
 
 ### Commands
@@ -132,6 +145,10 @@ pip install -r requirements.txt
 | `test_bridge.py` | Vérifie la connexion avec le vrai jeu |
 | `test_practice.py` | Vérifie le mode practice (checkpoints) sur le vrai jeu |
 | `diag_bridge.py` | Trace pas à pas du début d'une tentative (débogage) |
+| `diag_practice.py` | Compare des rejeux en mode normal et practice (débogage) |
+| `play_greedy.py` / `watch_best.py` | Regarder l'IA entraînée / une partie sauvegardée en temps réel |
+| `run_batch.py` | Entraîne sur plusieurs niveaux officiels à la suite, en les ouvrant tout seul (mod v0.4.0+) |
+| `make_report.py` | Régénère `docs/RESULTS.md`, les figures et `results/summary_all.csv` à partir des logs |
 | `mod/` | Le mod Geode (C++) |
 
 ### Commandes
