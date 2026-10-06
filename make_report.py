@@ -4,10 +4,11 @@ Run it after any new training run:
     python make_report.py
 
 Reads:
+    results/<level>/log.txt     runs made by hand (practice mode), or log_part1*.txt + log_part2*.txt
+                                for a run that got stuck and was resumed
     results/runs/*.log          runs made with run_batch.py (first line describes the run)
-    results/<level>_log.txt     older runs made by hand (practice mode, default settings)
 Writes:
-    results/summary_all.csv     one line per run
+    results/summary.csv         one line per run
     docs/figures/*.png          figures used by the README and docs/RESULTS.md
     docs/RESULTS.md             the part between the "results:start" / "results:end" markers
 """
@@ -92,46 +93,34 @@ def parse_log(path):
 
 def collect():
     runs = {}
-    # 1. Older runs made by hand (practice mode, default settings)
-    for path in glob.glob(os.path.join("results", "*_log.txt")):
-        key = os.path.basename(path)[:-len("_log.txt")].replace("-", "_")
-        if key not in NAMES:
-            continue
-        r = parse_log(path)
-        r.update(level=key, mode="practice", variant="default", source=path,
-                 note="finer state (--obs fine)" if key in FINE else "")
-        runs[(key, "practice", "default")] = r
-    # Runs that got stuck, were fixed or interrupted, then resumed: <level>_log_part1*.txt + _part2*.txt
-    for key, note in RESUMED.items():
-        parts = []
-        for n in {key, key.replace("_", "-")}:
-            for k in (1, 2):
-                parts += glob.glob(os.path.join("results", f"{n}_log_part{k}*.txt"))
-        p1 = [f for f in parts if "_part1" in f]
-        p2 = [f for f in parts if "_part2" in f]
-        if not (p1 and p2) or runs.get((key, "practice", "default"), {}).get("seconds"):
-            continue                    # no parts, or a clean run of that level exists: use it
-        a, b = parse_log(p1[0]), parse_log(p2[0])
-        last_ep = a["curve"][-1][0] if a["curve"] else 0
-        curve = a["curve"] + [(e + last_ep, p) for e, p in b["curve"]]
-        # For the difficulty ranking: when part 1 was stuck because of a bug, its final plateau says
-        # nothing about the level. Drop it: part 1 up to its last record, then part 2.
-        cut = last_ep
-        if "stuck" in p1[0] and a["curve"]:
-            top = max(p for _, p in a["curve"])
-            cut = next(e for e, p in a["curve"] if p == top)
-        curve_adj = [(e, p) for e, p in a["curve"] if e <= cut] + [(e + cut, p) for e, p in b["curve"]]
-        b.update(level=key, mode="practice", variant="default", source=p2[0],
-                 episodes=(b["episodes"] or 0) + last_ep, seconds=None, steps=None, curve=curve,
-                 episodes_adj=(b["episodes"] or 0) + cut, curve_adj=curve_adj, note=note)
-        runs[(key, "practice", "default")] = b
-    sm = os.path.join("results", "stereo_madness_final_log.txt")
-    if os.path.exists(sm) and ("stereo_madness", "practice", "default") not in runs:
-        r = parse_log(sm)
-        r.update(level="stereo_madness", mode="practice", variant="default", source=sm,
-                 episodes=None, seconds=None, steps=None,
-                 note="development run (settings changed during training): not comparable")
-        runs[("stereo_madness", "practice", "default")] = r
+    # 1. Runs made by hand, one folder per level: results/<level>/log.txt, or log_part1*.txt +
+    #    log_part2*.txt when the run got stuck (or was interrupted) and was resumed
+    for key in NAMES:
+        folder = os.path.join("results", key)
+        single = os.path.join(folder, "log.txt")
+        p1 = sorted(glob.glob(os.path.join(folder, "log_part1*.txt")))
+        p2 = sorted(glob.glob(os.path.join(folder, "log_part2*.txt")))
+        if os.path.exists(single):
+            r = parse_log(single)
+            r.update(level=key, mode="practice", variant="default", source=single,
+                     note="finer state (--obs fine)" if key in FINE else "")
+            runs[(key, "practice", "default")] = r
+        elif p1 and p2:
+            a, b = parse_log(p1[0]), parse_log(p2[0])
+            last_ep = a["curve"][-1][0] if a["curve"] else 0
+            curve = a["curve"] + [(e + last_ep, p) for e, p in b["curve"]]
+            # For the difficulty ranking: when part 1 was stuck because of a bug, its final plateau
+            # says nothing about the level. Drop it: part 1 up to its last record, then part 2.
+            cut = last_ep
+            if "stuck" in p1[0] and a["curve"]:
+                top = max(p for _, p in a["curve"])
+                cut = next(e for e, p in a["curve"] if p == top)
+            curve_adj = [(e, p) for e, p in a["curve"] if e <= cut] + [(e + cut, p) for e, p in b["curve"]]
+            b.update(level=key, mode="practice", variant="default", source=p2[0],
+                     episodes=(b["episodes"] or 0) + last_ep, seconds=None, steps=None, curve=curve,
+                     episodes_adj=(b["episodes"] or 0) + cut, curve_adj=curve_adj,
+                     note=RESUMED.get(key, "trained in two parts: total time unknown"))
+            runs[(key, "practice", "default")] = b
     # 2. Runs made with run_batch.py: they replace the hand-made ones
     for path in glob.glob(os.path.join("results", "runs", "*.log")):
         r = parse_log(path)
@@ -321,7 +310,7 @@ def fig_ranking(runs, path):
 def main():
     runs = collect()
     os.makedirs(os.path.join("docs", "figures"), exist_ok=True)
-    with open(os.path.join("results", "summary_all.csv"), "w", newline="", encoding="utf-8") as f:
+    with open(os.path.join("results", "summary.csv"), "w", newline="", encoding="utf-8") as f:
         w = csv.writer(f)
         w.writerow(["level", "mode", "variant", "won", "best_percent", "episodes", "steps_played",
                     "seconds", "note", "source"])
@@ -359,7 +348,7 @@ def main():
     else:
         doc = "# Results\n\n" + block + "\n"
     open(path, "w", encoding="utf-8").write(doc)
-    print(f"{len(runs)} runs -> results/summary_all.csv, docs/RESULTS.md, docs/figures/ ({', '.join(figs)})")
+    print(f"{len(runs)} runs -> results/summary.csv, docs/RESULTS.md, docs/figures/ ({', '.join(figs)})")
 
 
 if __name__ == "__main__":

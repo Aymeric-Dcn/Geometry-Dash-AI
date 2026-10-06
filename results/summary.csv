@@ -1,10 +1,16 @@
-level,episodes,steps_played,seconds,win_actions,notes
-Stereo Madness,1350,201000,99.4,5111,development run: many settings changed; only the last resumed segment is timed
-Back on Track,3950,1062140,362.2,4850,
-Polargeist,2600,457379,166.9,5350,
-Dry Out,5150,848323,331.8,4831,
-Base After Base,2500,486299,175.0,4975,
-Can't Let Go,6450,906805,365.9,4791,
-Jumper,5350,779569,281.9,5136,
-Time Machine,1600,312681,134.7,5689,crashed at 73.8% (checkpoint not reproducible) then resumed; times are for the resumed part only (first part: 3850 episodes)
-Cycles,2950,525806,185.5,4705,
+level,mode,variant,won,best_percent,episodes,steps_played,seconds,note,source
+stereo_madness,practice,default,True,100.0,4150,749552,286.8,,results/stereo_madness/log.txt
+back_on_track,practice,default,True,100.0,3950,1062140,362.2,,results/back_on_track/log.txt
+polargeist,practice,default,True,100.0,2600,457379,166.9,,results/polargeist/log.txt
+dry_out,practice,default,True,100.0,5150,848323,331.8,,results/dry_out/log.txt
+base_after_base,practice,default,True,100.0,2500,486299,175.0,,results/base_after_base/log.txt
+cant_let_go,practice,default,True,100.0,6450,906805,365.9,,results/cant_let_go/log.txt
+jumper,practice,default,True,100.0,5350,779569,281.9,,results/jumper/log.txt
+time_machine,practice,default,True,100.0,4600,1029418,388.8,,results/time_machine/log.txt
+cycles,practice,default,True,100.0,2950,525806,185.5,,results/cycles/log.txt
+xstep,practice,default,True,100.0,3900,762972,272.3,,results/xstep/log.txt
+clutterfunk,practice,default,True,100.0,4000,800529,301.2,,results/clutterfunk/log.txt
+theory_of_everything,practice,default,True,100.0,6850,1112616,450.3,,results/theory_of_everything/log.txt
+electroman_adventures,practice,default,True,100.0,4600,1150451,392.8,,results/electroman_adventures/log.txt
+clubstep,practice,default,True,100.0,20100,,,stuck at 70.6% in a tight UFO corridor: the state was too coarse to tell close positions apart; resumed from the best run with a finer state (--obs fine); total time unknown,results/clubstep/log_part2_resume.txt
+deadlocked,practice,default,True,100.0,9150,2065893,809.2,finer state (--obs fine),results/deadlocked/log.txt

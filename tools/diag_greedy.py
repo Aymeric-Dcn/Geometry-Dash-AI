@@ -1,7 +1,7 @@
 """
 Compares the agent's current choices with its best run (debugging tool).
 Stop the training (Ctrl+C), keep the level open, then:
-    python diag_greedy.py theory-of-everything_clean
+    python -m tools.diag_greedy theory-of-everything_clean
 Writes diag_greedy.txt.
 """
 import pickle

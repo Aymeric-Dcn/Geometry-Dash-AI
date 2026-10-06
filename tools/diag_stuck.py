@@ -1,7 +1,7 @@
 """
 Looks at what happens at the place where training is stuck (debugging tool).
 Stop the training first (Ctrl+C), keep the level open in GD, then:
-    python diag_stuck.py clubstep
+    python -m tools.diag_stuck clubstep
 It replays the best run, then tries random moves from a bit before its end, and writes
 what it sees (position, %, game mode, death) to diag_stuck_<level>.txt.
 """

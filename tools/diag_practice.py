@@ -1,7 +1,7 @@
 """
 Diagnoses a determinism problem between normal mode and practice mode (debugging tool).
 
-Open the level in GD, then: python diag_practice.py
+Open the level in GD, then: python -m tools.diag_practice
 1. A short training in normal mode finds a run that survives a little while.
 2. That run is replayed several times, alternating normal and practice mode.
 3. For each replay, we print where it starts to differ from the first one.

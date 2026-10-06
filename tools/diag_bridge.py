@@ -1,6 +1,6 @@
 """
 Step-by-step trace of the start of an attempt on the real game (debugging tool).
-Open a level in GD, then: python diag_bridge.py
+Open a level in GD, then: python -m tools.diag_bridge
 """
 from realenv import RealGDEnv
 

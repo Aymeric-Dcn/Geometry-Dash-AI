@@ -13,7 +13,7 @@ Gymnasium-like API:
 from dataclasses import dataclass, replace
 import math
 
-from levels import LEVELS
+from sim.levels import LEVELS
 
 # --- Physics constants (approximation of the cube at normal speed) ---
 SPEED = 10.4          # blocks / second (GD normal speed)

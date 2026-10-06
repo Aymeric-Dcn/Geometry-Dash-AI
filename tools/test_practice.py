@@ -2,8 +2,8 @@
 Checks practice mode (GD checkpoints) on the real game, BEFORE training with it.
 
 Open a level in GD (Stereo Madness), stop any training, then:
-    python test_practice.py                     # uses a simple run (no jump until the first death)
-    python test_practice.py solution_qlearning_real_normal_state.txt   # uses a saved run (longer test)
+    python -m tools.test_practice                     # uses a simple run (no jump until the first death)
+    python -m tools.test_practice solution_qlearning_real_normal_state.txt   # uses a saved run (longer test)
 
 On levels with special sections (gravity portals, ships...), use a saved run that goes through
 them, so that checkpoints are tested there too.

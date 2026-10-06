@@ -2,7 +2,7 @@
 Checks that the game connection works, BEFORE training anything.
 
 1. Open Geometry Dash (with the GD AI Bridge mod), open Stereo Madness (or any level).
-2. Run: python test_bridge.py
+2. Run: python -m tools.test_bridge
 
 Tests:
   1. connection and restart

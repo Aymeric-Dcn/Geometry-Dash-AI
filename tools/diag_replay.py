@@ -1,6 +1,6 @@
 """
 Replays a saved run and writes every step around a given point to a file (debugging tool).
-    python diag_replay.py backup_clubstep/solution_qlearning_clubstep_practice_state.txt 3164
+    python -m tools.diag_replay backup_clubstep/solution_qlearning_clubstep_practice_state.txt 3164
 Writes diag_replay.txt: position, game mode, ground contact, real death and "training death"
 (the "lost in the sky" rule) for the 120 steps before that point and 40 after.
 """

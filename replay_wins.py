@@ -32,14 +32,12 @@ STEPS_PER_SECOND = 60
 
 
 def find_win(name):
-    """The winning run of a level, wherever it was saved (newest conventions first)."""
-    names = {name, name.replace("_", "-")}
-    candidates = []
-    for n in names:
-        candidates += sorted(glob.glob(os.path.join("results", "runs", f"{n}__practice__*_win.txt")))
-        candidates += sorted(glob.glob(os.path.join("results", "runs", f"{n}__normal__*_win.txt")))
-        candidates.append(os.path.join("results", f"{n}_win.txt"))
-    for n in names:   # not copied to results/ yet: the training's best run (a win if the level was beaten)
+    """The winning run of a level: results/<level>/win.txt, or a run made with run_batch.py, or
+    (not copied to results/ yet) the training's best run, which is a win if the level was beaten."""
+    candidates = [os.path.join("results", name, "win.txt")]
+    candidates += sorted(glob.glob(os.path.join("results", "runs", f"{name}__practice__*_win.txt")))
+    candidates += sorted(glob.glob(os.path.join("results", "runs", f"{name}__normal__*_win.txt")))
+    for n in (name, name.replace("_", "-")):
         candidates += [f"solution_qlearning_{n}_practice_fine.txt", f"solution_qlearning_{n}_practice_state.txt"]
     for path in candidates:
         if os.path.exists(path):
@@ -97,6 +95,9 @@ def main():
             input(f"\nOpen {name} in GD (leave it running, not paused), then press Enter...")
         env.normal_mode()                     # one attempt, no checkpoint
         if obs:
+            if obs.get_record_status().output_active:   # left running (e.g. by an interrupted run)
+                obs.stop_record()
+                time.sleep(1)
             obs.start_record()
         time.sleep(args.pause)
         actions = [int(c) for c in open(path).read().strip()]

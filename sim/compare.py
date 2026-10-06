@@ -1,12 +1,12 @@
 """
 Compare the blind agent variants over several random seeds.
-Usage: python compare.py [level_name]
+Usage: python -m sim.compare [level_name]
 """
 import sys
 from statistics import median
 
 from train_qlearning import train
-from search_bot import solve
+from sim.search_bot import solve
 
 level = sys.argv[1] if len(sys.argv) > 1 else "stereo_lite"
 SEEDS = range(5)

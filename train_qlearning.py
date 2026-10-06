@@ -29,7 +29,7 @@ import random
 import time
 from collections import defaultdict
 
-from gdsim import GDEnv, PlayerState
+from sim.gdsim import GDEnv, PlayerState
 
 
 def make_key(obs_mode, step, s: PlayerState, held=0):

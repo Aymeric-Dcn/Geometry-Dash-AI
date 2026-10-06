@@ -4,12 +4,12 @@ At each decision it tries "do nothing", and if that eventually leads to death it
 and tries "jump". This is how many GD bots work.
 Used to (1) prove a level is beatable, (2) compare against the learning agent.
 
-Usage: python search_bot.py [level_name]
+Usage: python -m sim.search_bot [level_name]
 """
 import sys
 import time
 
-from gdsim import GDEnv
+from sim.gdsim import GDEnv
 
 
 def key(s):

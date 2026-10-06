@@ -1,8 +1,8 @@
 """
 Plays the trained agent (no exploration) in the real game and saves its run.
 Open the level in GD, then:
-    python play_greedy.py                    # real time, so you can watch it
-    python play_greedy.py --speed 20         # fast
+    python -m tools.play_greedy                    # real time, so you can watch it
+    python -m tools.play_greedy --speed 20         # fast
 """
 import argparse
 import pickle

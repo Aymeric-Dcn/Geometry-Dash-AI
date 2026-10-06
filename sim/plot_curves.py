@@ -1,6 +1,6 @@
 """
 Plot the learning curves (agent progress over episodes) for each variant.
-Usage: python plot_curves.py [level_name]  ->  curves_<level>.png
+Usage: python -m sim.plot_curves [level_name]  ->  curves_<level>.png
 """
 import sys
 

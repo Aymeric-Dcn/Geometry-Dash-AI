@@ -1,218 +1,129 @@
 # Geometry Dash AI — a blind reinforcement learning agent
 
-🇬🇧 [English](#english) · 🇫🇷 [Français](#français)
+🇬🇧 English · 🇫🇷 [Français](README.fr.md)
 
-![Blind agent beating the level](solution_qlearning_stereo_lite_practice_state.gif)
+An agent that learns to beat **official Geometry Dash levels in the real game**, by trial and error,
+**without ever seeing the obstacles**. It only knows where it is in the level and how it is moving;
+everything else, it learns by dying.
 
-## Results / Résultats
+## Results
 
-**9 official levels beaten** (Stereo Madness → Cycles) in the real game by an agent that **never sees the obstacles**, most of them in under 6 minutes of training each.
-**9 niveaux officiels finis** (de Stereo Madness à Cycles) dans le vrai jeu par une IA qui **ne voit jamais les obstacles**, la plupart en moins de 6 minutes d'entraînement chacun.
+**15 of the 22 official levels beaten**, including the two demons tried so far, **Clubstep** and **Deadlocked**.
+Most levels take 3 to 7 minutes of training; Deadlocked took 13.5 minutes.
 
-![Training time per level](docs/figures/minutes_per_level.png)
+![Is a level hard for the AI when it is hard for humans?](docs/figures/ai_vs_official_difficulty.png)
 
-Method, all numbers and learning curves / Méthode, tous les chiffres et courbes : **[docs/RESULTS.md](docs/RESULTS.md)**
+The levels the AI finds hardest are not always the ones humans find hardest: it never misses a timing,
+but it struggles with long precise sequences and with dead ends that look promising.
+All numbers, learning curves and the full ranking: **[docs/RESULTS.md](docs/RESULTS.md)**.
 
----
+## How it works
 
-## English
+- **A Geode mod** (`mod/`) drives the game in *lockstep*: the game only moves when the agent asks for a step
+  (1/60 s of game time), up to 20 steps per rendered frame, so training runs up to 20x faster than real time.
+- **The agent is blind.** Its state is the time since the start, its height, its vertical speed, whether it
+  touches the ground and whether the button is already pressed. It never sees spikes or blocks.
+- **Tabular Q-learning** with a few tricks that make it fast on a deterministic game:
+  each attempt is learned backwards (reverse replay), exploration is focused on the end of the best run so far,
+  exploratory actions are held for random durations (to fly a ship), and when stuck the exploration zone
+  grows, then moves back to escape dead ends.
+- **Practice mode:** the agent respawns at GD checkpoints placed along its best run, and every respawn is
+  checked against the original run. A level only counts as beaten when the agent plays it **in one go from
+  the start, without checkpoints**.
 
-Before hooking up the real game, the idea is validated on a **simplified Python copy of GD** (cube mode only).
-The agent is **blind**: it sees no obstacle at all and learns by trial and error
-("here, jumping killed me / didn't kill me").
+## Repository layout
 
-### Installation
+```
+train_qlearning.py   the agent (Q-learning) and its command line
+realenv.py           the real game as a training environment (talks to the mod)
+run_batch.py         trains several official levels in a row (mod v0.4.0+)
+watch_best.py        replays a saved run at real speed
+replay_wins.py       replays every winning run, optionally recording one video per level with OBS
+make_report.py       rebuilds docs/RESULTS.md and its figures from the logs
+mod/                 the Geode mod (C++), built by GitHub Actions
+results/<level>/     training log and winning run of each beaten level (history/: development runs)
+docs/                results report and figures
+tools/               connection tests and debugging tools
+sim/                 the first experiments: a simplified Python copy of GD (cube only)
+```
+
+## Getting started
 
 ```
 pip install -r requirements.txt
 ```
 
-### Files
+**1. Build and install the mod.** Push the repository, then on GitHub open *Actions → Build Geode mod*,
+open the latest run and download the `gd-ai-bridge` artifact (a `.geode` file in a zip). Copy it into
+`geode/mods/` in the GD folder (Steam: right-click GD → Manage → Browse local files) and restart GD.
+The mod targets GD 2.2081 and Geode 5.10 on Windows. When nothing is connected, the game behaves normally.
 
-| File | Purpose |
+**2. Check the connection.** Open a level, then:
+```
+python -m tools.test_bridge        # running, jumping, determinism, speed
+python -m tools.test_practice      # respawning at a checkpoint reproduces the run exactly
+```
+While Python is connected but idle, the game freezes: that is expected.
+
+**3. Train.** Open the level in GD, then:
+```
+python train_qlearning.py --env real --level stereo_madness
+python train_qlearning.py --env real --level stereo_madness --resume     # continue (Ctrl+C saves everything)
+python run_batch.py --levels 1-9 --max-minutes 30                        # several levels in a row
+```
+The `--level` name is only used to name the saved files (`qtable_*.pkl`, `solution_qlearning_*.txt`).
+
+**4. Watch, record, report.**
+```
+python watch_best.py solution_qlearning_stereo_madness_practice_state.txt
+python replay_wins.py --obs            # one video per level in videos/ (needs OBS and obsws-python)
+python make_report.py                  # after copying a finished run to results/<level>/
+```
+
+### Useful options
+
+| Option | When to use it |
 |---|---|
-| `gdsim.py` | Cube physics (240 Hz, deterministic) and training environment (Gymnasium-like API) |
-| `levels.py` | Levels drawn in ASCII (`^` spike, `#` block). Add your own here |
-| `search_bot.py` | Non-AI backtracking bot: proves a level is beatable, used as a reference |
-| `train_qlearning.py` | The blind agent (Q-learning), with or without practice mode |
-| `render.py` | Turns a solution into a GIF |
-| `compare.py` | Compares every variant over 5 seeds |
-| `plot_curves.py` | Plots the learning curves |
-| `realenv.py` | Same environment API, but for the real game through the mod |
-| `test_bridge.py` | Checks the connection with the real game |
-| `test_practice.py` | Checks practice mode (checkpoints) on the real game |
-| `diag_bridge.py` | Step-by-step trace of the start of an attempt (debugging) |
-| `diag_practice.py` | Compares replays in normal and practice mode (debugging) |
-| `play_greedy.py` / `watch_best.py` | Watch the trained agent / a saved run in real time |
-| `run_batch.py` | Trains on several official levels in a row, opening each one automatically (mod v0.4.0+) |
-| `make_report.py` | Rebuilds `docs/RESULTS.md`, the figures and `results/summary_all.csv` from the logs |
-| `mod/` | The Geode mod (C++) |
+| `--obs fine` | Very tight passages (Clubstep, Deadlocked): 4x more precise state, more memory |
+| `--seed-run FILE` | Start a new Q-table from a saved run (e.g. after changing `--obs`) |
+| `--resume` | Continue from the saved Q-table |
+| `--max-fall S` | Stop an attempt when the cube flies away at full speed for S seconds (default 1.5, 0 = off) |
+| `--max-minutes M` | Time limit |
+| `--mode normal` | No checkpoints: slower, but every attempt starts from the beginning |
 
-### Commands
+### When training gets stuck
 
+The log shows how exploration widens when no record is beaten. If it stays stuck for thousands of attempts:
 ```
-python train_qlearning.py                     # blind agent, practice mode, stereo_lite level
-python train_qlearning.py --mode normal       # always restarts from the beginning
-python train_qlearning.py --obs x             # only knows its x position
-python render.py solution_qlearning_stereo_lite_practice_state.txt
-python compare.py
-python plot_curves.py
+python watch_best.py solution_qlearning_<level>_practice_state.txt   # where and how does it die?
+python -m tools.diag_stuck <level>                                    # what happens around the death
+python -m tools.diag_greedy <level>                                   # does the agent still follow its best run?
 ```
 
-### First results (`stereo_lite` level, 5 seeds)
+## First experiments: the simulator
 
-| Variant | Success | Steps simulated (median) | Real-time equivalent |
-|---|---|---|---|
-| Search bot (reference) | yes | 1,456 | < 1 min |
-| Blind agent, practice mode | 5/5 | ~285,000 | ~1 h 20 |
-| Blind agent, restarts from the beginning | 5/5 | ~1,490,000 | ~7 h |
-| Agent that only knows x | 0/5 | — | — |
+Before connecting the real game, the idea was validated on a **simplified copy of GD in Python** (`sim/`,
+cube only, levels drawn in ASCII).
 
-![Learning curves](curves_stereo_lite.png)
-
-Takeaways:
-1. **The blind agent works**, as long as it knows its own movement (height, vertical speed, grounded or not).
-   With x alone, it mixes up different situations (in the air / on the ground) and fails.
-2. **Practice mode cuts training time by ~5x.** Keep it for the real game.
-3. **A speedhack will be essential**: in real time, even a very easy level would take hours.
-4. A simple search bot is hundreds of times more efficient on this problem. RL becomes worthwhile
-   in phase 2 (an agent that sees the level and must generalize to unseen levels).
-
-### Connecting the real game (Geode mod)
-
-The `mod/` folder contains **GD AI Bridge**, a Geode mod (GD 2.2081, Geode 5.10, Windows) that opens a local
-server on `127.0.0.1:22222`. Python drives the game in **lockstep**: the game only advances when the agent
-asks for a step, each step is exactly 1/60 s of game time, and many steps run per rendered frame (speedhack).
-When nothing is connected, the game behaves normally.
-
-**1. Build the mod** — easiest: push the repo, then on GitHub open *Actions → Build Geode mod*, open the
-latest run and download the `gd-ai-bridge` artifact (a zip containing a `.geode` file).
-Local alternative: install the Geode CLI, Visual Studio Build Tools (C++) and CMake, run
-`geode sdk install` and `geode sdk install-binaries` once, then `geode build` inside `mod/`.
-
-**2. Install it** — copy the `.geode` file into `geode/mods/` in the GD folder
-(Steam: right-click GD → Manage → Browse local files), then restart GD.
-
-**3. Test the connection** — open a level (Stereo Madness), then:
-```
-python test_bridge.py
-```
-It checks running, jumping, determinism and speed. While Python is connected but idle, the game freezes: that is expected.
-
-**4. Check practice mode (GD checkpoints)** — `python test_practice.py` checks that respawning at a
-checkpoint reproduces the original run exactly, and that GD's automatic checkpoints are ignored.
-
-**5. Train on the real game**
-```
-python train_qlearning.py --env real                 # practice mode (GD checkpoints)
-python train_qlearning.py --env real --mode normal   # always from the start
-python train_qlearning.py --env real --resume        # continue (Ctrl+C saves everything)
-```
-Checkpoints are only placed on the ground along the best run so far, and moved back if the agent
-makes no progress from them for 300 attempts (protection against "impossible" checkpoints).
-
-### Next steps
-
-- Add the ship (hold the button) to the simulator.
-- Phase 2: an agent that sees the obstacles.
-
----
-
-## Français
-
-Avant de brancher le vrai jeu, on valide l'idée sur une **copie simplifiée de GD en Python** (mode cube uniquement).
-L'IA est **aveugle** : elle ne voit aucun obstacle et apprend par essai-erreur
-(« à cet endroit, sauter m'a tué / ne m'a pas tué »).
-
-### Installation
+![Blind agent beating the simulated level](sim/media/solution_qlearning_stereo_lite_practice_state.gif)
 
 ```
-pip install -r requirements.txt
+python train_qlearning.py                    # simulator, level stereo_lite
+python -m sim.search_bot                     # non-AI backtracking bot, as a reference
+python -m sim.compare                        # every variant over 5 seeds
 ```
 
-### Fichiers
+| Variant (`stereo_lite`, 5 seeds) | Success | Steps simulated (median) |
+|---|---|---|
+| Search bot (reference) | yes | 1,456 |
+| Blind agent, practice mode | 5/5 | ~285,000 |
+| Blind agent, restarts from the beginning | 5/5 | ~1,490,000 |
+| Agent that only knows x | 0/5 | — |
 
-| Fichier | Rôle |
-|---|---|
-| `gdsim.py` | Physique du cube (240 Hz, déterministe) et environnement d'entraînement (API style Gymnasium) |
-| `levels.py` | Les niveaux, dessinés en ASCII (`^` pic, `#` bloc). Ajoute les tiens ici |
-| `search_bot.py` | Bot sans IA par retour arrière : prouve qu'un niveau est faisable, sert de référence |
-| `train_qlearning.py` | L'IA aveugle (Q-learning), avec ou sans mode practice |
-| `render.py` | Transforme une solution en GIF |
-| `compare.py` | Compare toutes les variantes sur 5 graines |
-| `plot_curves.py` | Trace les courbes d'apprentissage |
-| `realenv.py` | Même API d'environnement, mais pour le vrai jeu via le mod |
-| `test_bridge.py` | Vérifie la connexion avec le vrai jeu |
-| `test_practice.py` | Vérifie le mode practice (checkpoints) sur le vrai jeu |
-| `diag_bridge.py` | Trace pas à pas du début d'une tentative (débogage) |
-| `diag_practice.py` | Compare des rejeux en mode normal et practice (débogage) |
-| `play_greedy.py` / `watch_best.py` | Regarder l'IA entraînée / une partie sauvegardée en temps réel |
-| `run_batch.py` | Entraîne sur plusieurs niveaux officiels à la suite, en les ouvrant tout seul (mod v0.4.0+) |
-| `make_report.py` | Régénère `docs/RESULTS.md`, les figures et `results/summary_all.csv` à partir des logs |
-| `mod/` | Le mod Geode (C++) |
+These numbers predate reverse replay, which made the agent several times faster.
 
-### Commandes
+## Next steps
 
-```
-python train_qlearning.py                     # IA aveugle, mode practice, niveau stereo_lite
-python train_qlearning.py --mode normal       # recommence toujours du début
-python train_qlearning.py --obs x             # ne connaît que sa position x
-python render.py solution_qlearning_stereo_lite_practice_state.txt
-python compare.py
-python plot_curves.py
-```
-
-### Premiers résultats (niveau `stereo_lite`, 5 graines)
-
-| Variante | Réussite | Pas simulés (médiane) | Équivalent en temps réel |
-|---|---|---|---|
-| Bot recherche (référence) | oui | 1 456 | < 1 min |
-| IA aveugle, mode practice | 5/5 | ~285 000 | ~1 h 20 |
-| IA aveugle, recommence du début | 5/5 | ~1 490 000 | ~7 h |
-| IA ne connaissant que x | 0/5 | — | — |
-
-Ce qu'on en retire :
-1. **L'IA aveugle marche**, à condition qu'elle connaisse son propre mouvement (hauteur, vitesse, au sol ou non).
-   Avec seulement x, elle mélange des situations différentes (en l'air / au sol) et n'y arrive pas.
-2. **Le mode practice divise le temps par ~5.** À garder pour le vrai jeu.
-3. **Le speedhack sera indispensable** : en temps réel, il faudrait des heures même pour un niveau très facile.
-4. Un simple bot de recherche est des centaines de fois plus efficace sur ce problème. Le RL deviendra
-   intéressant en phase 2 (une IA qui voit le niveau et doit généraliser à des niveaux inconnus).
-
-### Brancher le vrai jeu (mod Geode)
-
-Le dossier `mod/` contient **GD AI Bridge**, un mod Geode (GD 2.2081, Geode 5.10, Windows) qui ouvre un serveur
-local sur `127.0.0.1:22222`. Python pilote le jeu **pas à pas** : le jeu n'avance que quand l'IA demande un pas,
-chaque pas dure exactement 1/60 s de jeu, et plusieurs pas sont joués par image affichée (speedhack).
-Sans connexion, le jeu fonctionne normalement.
-
-**1. Compiler le mod** — le plus simple : pousser le dépôt, puis sur GitHub ouvrir *Actions → Build Geode mod*,
-ouvrir la dernière exécution et télécharger l'artefact `gd-ai-bridge` (un zip qui contient un fichier `.geode`).
-Alternative en local : installer le Geode CLI, Visual Studio Build Tools (C++) et CMake, lancer une fois
-`geode sdk install` et `geode sdk install-binaries`, puis `geode build` dans `mod/`.
-
-**2. L'installer** — copier le fichier `.geode` dans `geode/mods/` du dossier de GD
-(Steam : clic droit sur GD → Gérer → Parcourir les fichiers locaux), puis relancer GD.
-
-**3. Tester la connexion** — ouvrir un niveau (Stereo Madness), puis :
-```
-python test_bridge.py
-```
-Le script vérifie la course, le saut, le déterminisme et la vitesse. Quand Python est connecté mais ne fait rien, le jeu se fige : c'est normal.
-
-**4. Vérifier le mode practice (checkpoints de GD)** — `python test_practice.py` vérifie que repartir
-d'un checkpoint reproduit exactement la partie d'origine, et que les checkpoints automatiques de GD sont ignorés.
-
-**5. Entraîner sur le vrai jeu**
-```
-python train_qlearning.py --env real                 # mode practice (checkpoints de GD)
-python train_qlearning.py --env real --mode normal   # toujours depuis le début
-python train_qlearning.py --env real --resume        # reprendre (Ctrl+C sauvegarde tout)
-```
-Les checkpoints ne sont posés qu'au sol, le long de la meilleure partie, et reculés si l'IA ne progresse
-pas pendant 300 essais (protection contre les checkpoints « impossibles »).
-
-### Suite
-
-- Ajouter le vaisseau (maintenir la touche) dans le simulateur.
-- Phase 2 : une IA qui voit les obstacles.
+- The 7 remaining official levels.
+- Clean reruns of every level with the current version, several seeds each, for a fair difficulty ranking.
+- Phase 2: an agent that sees the level and has to generalize to levels it has never played.

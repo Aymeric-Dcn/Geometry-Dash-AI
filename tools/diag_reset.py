@@ -1,6 +1,6 @@
 """
 Where does a restart put the player right now? (debugging tool)
-Stop the training with Ctrl+C WITHOUT leaving the level, then: python diag_reset.py
+Stop the training with Ctrl+C WITHOUT leaving the level, then: python -m tools.diag_reset
 """
 from realenv import GAMEMODES, RealGDEnv
 

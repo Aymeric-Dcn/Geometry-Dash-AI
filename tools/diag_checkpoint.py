@@ -1,7 +1,7 @@
 """
 Checks that respawning at a checkpoint reproduces the run from the start (debugging tool).
 Stop the training first (Ctrl+C), keep the level open in GD, then:
-    python diag_checkpoint.py clubstep
+    python -m tools.diag_checkpoint clubstep
 For checkpoints placed along the end of the best run, it compares the run from the start with
 the same actions played after a respawn, and writes the result to diag_checkpoint_<level>.txt.
 """

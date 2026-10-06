@@ -1,12 +1,12 @@
 """
 Replay a solution and turn it into a GIF (no game or pygame needed).
-Usage: python render.py solution_qlearning_stereo_lite_practice_state.txt [level_name]
+Usage: python -m sim.render solution_qlearning_stereo_lite_practice_state.txt [level_name]
 """
 import sys
 
 from PIL import Image, ImageDraw
 
-from gdsim import GDEnv, PHYS_HZ, TICKS_PER_STEP
+from sim.gdsim import GDEnv, PHYS_HZ, TICKS_PER_STEP
 
 PX = 28                 # pixels per block
 W, H = 22 * PX, 7 * PX  # 22 x 7 block window

@@ -20,3 +20,4 @@ backup_*/
 diag_*.txt
 *.tgz
 tq.new
+!sim/media/**

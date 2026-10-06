@@ -13,7 +13,7 @@ so the numbers look like the simulator's.
 import socket
 from dataclasses import dataclass, replace
 
-from gdsim import PlayerState
+from sim.gdsim import PlayerState
 
 UNITS_PER_BLOCK = 30.0
 CHECKPOINT_SEARCH = 30      # how far back we look for a valid checkpoint position (steps)
@@ -161,14 +161,18 @@ class RealGDEnv:
         so it varies. Waiting for the first step that moves the player forward makes every
         attempt start from exactly the same state (the first step is always "do nothing").
         """
-        self.raw = RawState.parse(self._command("RESET"))
-        prev_x = self.raw.x
-        for _ in range(1000):
-            self.raw = RawState.parse(self._command("STEP 0"))
-            if self.raw.x > prev_x:
-                return
+        for attempt in range(2):                  # if the first RESET did not take, try once more
+            self.raw = RawState.parse(self._command("RESET"))
             prev_x = self.raw.x
-        raise RuntimeError("The player never started moving after the restart")
+            for _ in range(600):
+                self.raw = RawState.parse(self._command("STEP 0"))
+                if self.raw.x > prev_x:
+                    return
+                prev_x = self.raw.x
+        r = self.raw
+        raise RuntimeError(f"The player never started moving after the restart (x={r.x / 30:.2f} blocks, "
+                           f"{r.percent:.1f}%, dead={int(r.dead)}, won={int(r.won)}, mode={r.mode}). "
+                           "Is the level running (not paused, not on the end screen)?")
 
     def _set_practice(self, on: bool):
         if self._practice != on:

@@ -1,0 +1,79 @@
+ep.     50  eps=0.300  agent progress =   3.8%  (best   3.8%)  known states=2185
+ep.    100  eps=0.300  agent progress =   7.7%  (best   7.7%)  known states=3455
+ep.    150  eps=0.300  agent progress =   9.2%  (best   9.2%)  known states=4547
+ep.    200  eps=0.299  agent progress =  10.0%  (best  10.0%)  known states=4907
+ep.    250  eps=0.299  agent progress =  12.4%  (best  12.4%)  known states=5585
+ep.    300  eps=0.299  agent progress =  12.8%  (best  12.8%)  known states=6080
+ep.    350  eps=0.299  agent progress =  13.9%  (best  13.9%)  known states=7040
+ep.    400  eps=0.299  agent progress =  15.9%  (best  15.9%)  known states=8746
+ep.    450  eps=0.299  agent progress =  19.2%  (best  19.2%)  known states=9378
+ep.    500  eps=0.298  agent progress =  21.9%  (best  21.9%)  known states=9995
+ep.    550  eps=0.298  agent progress =  22.9%  (best  22.9%)  known states=10338
+ep.    600  eps=0.298  agent progress =  22.9%  (best  22.9%)  known states=10408
+ep.    650  eps=0.298  agent progress =  24.8%  (best  24.8%)  known states=10906
+ep.    700  eps=0.298  agent progress =  33.4%  (best  33.4%)  known states=12741
+ep.    750  eps=0.298  agent progress =  35.2%  (best  35.2%)  known states=13610
+ep.    800  eps=0.298  agent progress =  35.2%  (best  35.2%)  known states=13987
+ep.   1000  eps=0.297  agent progress =  35.2%  (best  35.2%)  known states=15342
+ep.   1200  eps=0.296  agent progress =  35.2%  (best  35.2%)  known states=15824
+ep.   1250  no new record for a while: exploring the last 60 steps
+ep.   1400  eps=0.296  agent progress =  35.2%  (best  35.2%)  known states=16239
+ep.   1450  eps=0.296  agent progress =  35.3%  (best  35.3%)  known states=16437
+ep.   1600  eps=0.295  agent progress =  35.3%  (best  35.3%)  known states=16452
+ep.   1800  eps=0.295  agent progress =  35.2%  (best  35.3%)  known states=16536
+ep.   1950  no new record for a while: exploring the last 60 steps
+ep.   2000  eps=0.294  agent progress =  37.4%  (best  37.4%)  known states=16558
+ep.   2050  eps=0.294  agent progress =  39.2%  (best  39.2%)  known states=16701
+ep.   2150  eps=0.294  agent progress =  42.9%  (best  42.9%)  known states=17420
+ep.   2200  eps=0.293  agent progress =  46.1%  (best  46.1%)  known states=18038
+ep.   2250  eps=0.293  agent progress =  48.8%  (best  48.8%)  known states=19096
+ep.   2300  eps=0.293  agent progress =  51.3%  (best  51.3%)  known states=19831
+ep.   2350  eps=0.293  agent progress =  54.1%  (best  54.1%)  known states=20763
+ep.   2400  eps=0.293  agent progress =  55.4%  (best  55.4%)  known states=22015
+ep.   2450  eps=0.293  agent progress =  56.9%  (best  56.9%)  known states=22958
+ep.   2500  eps=0.292  agent progress =  57.5%  (best  57.5%)  known states=23479
+ep.   2550  eps=0.292  agent progress =  60.2%  (best  60.2%)  known states=24148
+ep.   2600  eps=0.292  agent progress =  67.5%  (best  67.5%)  known states=25697
+ep.   2650  eps=0.292  agent progress =  70.9%  (best  70.9%)  known states=27890
+ep.   2800  eps=0.292  agent progress =  70.9%  (best  70.9%)  known states=28427
+ep.   3000  eps=0.291  agent progress =  70.9%  (best  70.9%)  known states=28670
+ep.   3150  no new record for a while: exploring the last 60 steps
+ep.   3200  eps=0.290  agent progress =  70.9%  (best  70.9%)  known states=29084
+ep.   3400  eps=0.290  agent progress =  70.9%  (best  70.9%)  known states=29566
+ep.   3600  eps=0.289  agent progress =  70.9%  (best  70.9%)  known states=29901
+ep.   3650  no new record for a while: exploring the last 120 steps
+ep.   3700  eps=0.289  agent progress =  74.2%  (best  74.2%)  known states=31086
+ep.   3800  eps=0.289  agent progress =  74.2%  (best  74.2%)  known states=32951
+ep.   4000  eps=0.288  agent progress =  74.2%  (best  74.2%)  known states=36084
+ep.   4200  no new record for a while: exploring the last 60 steps
+ep.   4200  checkpoint at step 3601 not reproducible, set aside (Respawn at x=625.693, y=33.800 (ufo) instead of 623.379, 33.800 (ufo): checkpoints are not reproducible on this level)
+ep.   4200  eps=0.287  agent progress =  74.2%  (best  74.2%)  known states=38278
+ep.   4250  eps=0.287  agent progress =  75.5%  (best  75.5%)  known states=39300
+ep.   4400  eps=0.287  agent progress =  75.5%  (best  75.5%)  known states=39401
+ep.   4600  eps=0.286  agent progress =  75.5%  (best  75.5%)  known states=41294
+ep.   4750  no new record for a while: exploring the last 60 steps
+ep.   4800  eps=0.286  agent progress =  75.5%  (best  75.5%)  known states=45705
+ep.   5000  eps=0.285  agent progress =  75.5%  (best  75.5%)  known states=47773
+ep.   5200  eps=0.284  agent progress =  75.5%  (best  75.5%)  known states=50456
+ep.   5250  no new record for a while: exploring the last 120 steps
+ep.   5250  checkpoint at step 3601 not reproducible, set aside (Respawn at x=625.693, y=33.800 (ufo) instead of 623.379, 33.800 (ufo): checkpoints are not reproducible on this level)
+ep.   5300  eps=0.284  agent progress =  80.9%  (best  80.9%)  known states=51417
+ep.   5400  eps=0.284  agent progress =  80.9%  (best  80.9%)  known states=51998
+ep.   5600  eps=0.283  agent progress =  80.9%  (best  80.9%)  known states=52385
+ep.   5800  eps=0.283  agent progress =  80.9%  (best  80.9%)  known states=52609
+ep.   5900  no new record for a while: exploring the last 60 steps
+ep.   6000  eps=0.282  agent progress =  80.9%  (best  80.9%)  known states=53565
+ep.   6200  eps=0.281  agent progress =  80.9%  (best  80.9%)  known states=54152
+ep.   6400  no new record for a while: exploring the last 120 steps
+ep.   6400  eps=0.281  agent progress =  80.9%  (best  80.9%)  known states=54572
+ep.   6450  eps=0.281  agent progress =  82.5%  (best  82.5%)  known states=55866
+ep.   6550  eps=0.280  agent progress =  87.0%  (best  87.0%)  known states=56369
+ep.   6600  eps=0.280  agent progress =  89.6%  (best  89.6%)  known states=57489
+ep.   6650  eps=0.280  agent progress =  93.8%  (best  93.8%)  known states=58672
+ep.   6700  eps=0.280  agent progress =  95.0%  (best  95.0%)  known states=59620
+ep.   6750  eps=0.280  agent progress =  96.8%  (best  96.8%)  known states=60490
+ep.   6800  eps=0.280  agent progress =  97.9%  (best  97.9%)  known states=61835
+ep.   6850  eps=0.279  agent progress = 100.0%  (best 100.0%)  known states=62797
+
+>>> LEVEL BEATEN after 6850 episodes, 1112616 steps simulated, 450.3s
+Saved: qtable_theory-of-everything_clean_practice_state.pkl, solution_qlearning_theory-of-everything_clean_practice_state.txt
