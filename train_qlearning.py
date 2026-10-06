@@ -185,7 +185,8 @@ def train(level="stereo_lite", mode="practice", obs_mode="state", episodes=20000
                 explore_from = max(0, explore_to - back)
                 margin = max(1, explore_to - explore_from)
                 zone = f"{back // 60}-{2 * back // 60} s before the end (dead end?)"
-            if verbose and margin and best_acts and prev_margin and (zone, max_hold) != prev_margin:
+            if (verbose and margin and best_acts and prev_margin and stuck_level > 0
+                    and (zone, max_hold) != prev_margin):
                 print(f"ep. {ep:6d}  no new record for a while: exploring {zone}"
                       + (f", holds up to {max_hold} steps" if max_hold > 30 else ""))
             prev_margin = (zone, max_hold) if margin else None

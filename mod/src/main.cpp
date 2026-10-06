@@ -54,6 +54,7 @@ bool trimming = false;                    // true while WE remove checkpoints
 bool waitingForLayer = false;             // a LEVEL command is loading a new level
 PlayLayer* freshLayer = nullptr;          // the PlayLayer created for that new level
 int settleFrames = 0;                     // frames to let a freshly opened level start by itself
+PlayLayer* knownLayer = nullptr;          // the level the agent was last driving
 
 bool connected() {
     return client != INVALID_SOCKET;
@@ -204,9 +205,14 @@ class $modify(BridgeScheduler, CCScheduler) {
                 return;
             }
             waitingForLayer = false;
-            // The new PlayLayer exists before the level has really started (its UI is not
-            // there yet): resetting it right away crashed GD in PlayLayer::updateTimeLabel.
-            // Let it run normally for about 1.5 s first.
+        }
+        // A new PlayLayer exists before the level has really started (its UI is not there yet):
+        // resetting it right away crashed GD in PlayLayer::updateTimeLabel. This happens after a
+        // LEVEL command, or when the agent is already waiting while the user opens a level.
+        // Let any new level run normally for about 1.5 s first.
+        if (!pl) knownLayer = nullptr;            // back in the menus: the next level is new
+        if (pl && pl != knownLayer) {
+            knownLayer = pl;
             settleFrames = 90;
         }
         if (settleFrames > 0) {
