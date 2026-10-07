@@ -15,6 +15,7 @@
 //   CHECKPOINT                   OK n    (place a checkpoint here; n = number of checkpoints)
 //   CLEARCP                      OK      (remove all checkpoints: RESET goes back to the start)
 //   LEVEL id                     OK      (open official level `id`: 1 = Stereo Madness ... 22 = Dash)
+//   VIEW                         V n t dx dy w h ...  (the n objects around the player, see viewLine)
 //
 // In practice mode, RESET respawns at the last checkpoint placed with CHECKPOINT. The checkpoints
 // GD places by itself (auto-checkpoints) are removed as soon as they appear.
@@ -186,6 +187,31 @@ std::string stateLine(PlayLayer* pl) {
         pl->getCurrentPercent(), gamemode(p));
 }
 
+// What the agent "sees": every object near the player, as its GD object type (GameObjectType as a
+// number: 0 solid, 2 hazard, 25 slope, rings, pads, portals...) and its hitbox, relative to the
+// player's centre, in GD units (1 block = 30). Window: 2 blocks behind to 11 ahead, 4 below to 5
+// above. Decoration (type 7) and objects without a hitbox are left out.
+std::string viewLine(PlayLayer* pl) {
+    auto p = pl->m_player1;
+    float px = p->m_position.x, py = p->m_position.y;
+    std::string out;
+    int n = 0;
+    if (pl->m_objects) {
+        for (auto obj : CCArrayExt<GameObject*>(pl->m_objects)) {
+            if (!obj) continue;
+            int type = static_cast<int>(obj->m_objectType);
+            if (type == 7) continue;
+            auto r = obj->getObjectRect();
+            if (r.size.width <= 0.f || r.size.height <= 0.f) continue;
+            float dx = r.origin.x - px, dy = r.origin.y - py;
+            if (dx + r.size.width < -60.f || dx > 330.f || dy + r.size.height < -120.f || dy > 150.f) continue;
+            out += fmt::format(" {} {:.1f} {:.1f} {:.1f} {:.1f}", type, dx, dy, r.size.width, r.size.height);
+            if (++n >= 400) break;
+        }
+    }
+    return fmt::format("V {}{}\n", n, out);
+}
+
 } // namespace bridge
 
 $on_mod(Loaded) {
@@ -307,6 +333,9 @@ class $modify(BridgeScheduler, CCScheduler) {
             }
             else if (line == "STATE") {
                 reply = stateLine(pl);
+            }
+            else if (line == "VIEW") {
+                reply = viewLine(pl);
             }
             else if (line.rfind("SPEED", 0) == 0) {
                 stepsPerFrame = std::clamp(std::atoi(line.c_str() + 5), 1, 1000);

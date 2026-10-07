@@ -298,6 +298,21 @@ class RealGDEnv:
     def snapshot(self):
         return self.state
 
+    def view(self):
+        """Objects around the player (mod v0.5.0+): list of (gd_type, x, y, w, h) in blocks, where
+        (x, y) is the bottom-left corner of the object's hitbox relative to the player's bottom-left
+        corner. See deep/realview.py to turn it into the grid the neural network reads."""
+        line = self._command("VIEW")
+        parts = line.split()
+        if not parts or parts[0] != "V":
+            raise RuntimeError(f"Unexpected answer to VIEW: {line!r} (is the mod v0.5.0 or newer?)")
+        vals = parts[2:]
+        half = UNITS_PER_BLOCK / 2                  # the player's hitbox is one block, centred on its position
+        return [(int(vals[i]), (float(vals[i + 1]) + half) / UNITS_PER_BLOCK,
+                 (float(vals[i + 2]) + half) / UNITS_PER_BLOCK,
+                 float(vals[i + 3]) / UNITS_PER_BLOCK, float(vals[i + 4]) / UNITS_PER_BLOCK)
+                for i in range(0, len(vals), 5)]
+
     def close(self):
         try:
             self.sock.close()
