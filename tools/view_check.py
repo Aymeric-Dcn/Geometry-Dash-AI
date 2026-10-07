@@ -9,11 +9,13 @@ Open a level in GD, then:
 Every `--every` steps (30 = half a second) the game stops and the terminal shows the grid around
 the player: compare it with the frozen game screen, then press Enter to continue.
     @ the player (1 block)   # solid   ^ hazard (kills)   o orb / pad / portal   . empty
-The grid covers 1 block behind the player to 10 ahead, 5 blocks below its feet to 4 above.
+The grid covers 1 block behind the player to 10 ahead, 5 blocks below its feet to 4 above; it is
+aligned on the level's blocks, so the @ marks the block the player is (mostly) in.
 """
 import argparse
 from collections import Counter
 
+from deep.realdqn import frac_x
 from deep.realview import channel, draw, grid
 from realenv import GAMEMODES, RealGDEnv
 
@@ -41,7 +43,7 @@ def main():
                     unknown[t] += 1
             print(f"\nstep {step}  {env.raw.percent:.1f}%  mode={GAMEMODES[env.raw.mode]}  "
                   f"height={env.state.y:.2f} blocks  {len(objs)} objects nearby")
-            print(draw(grid(objs, env.state.y)))
+            print(draw(grid(objs, env.state.y, frac_x(env))))
             for t, x, y, w, h in sorted(objs, key=lambda o: o[1])[:12]:
                 print(f"   type {t:3d}  x={x:6.2f}  y={y:6.2f}  size {w:.2f} x {h:.2f}")
             if env.raw.dead:
