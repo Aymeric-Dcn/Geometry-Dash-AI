@@ -32,6 +32,13 @@ from collections import defaultdict
 from sim.gdsim import GDEnv, PlayerState
 
 
+def clock(seconds):
+    """1h02m03s / 2m03s / 3s"""
+    m, s = divmod(int(seconds), 60)
+    h, m = divmod(m, 60)
+    return f"{h}h{m:02d}m{s:02d}s" if h else f"{m}m{s:02d}s" if m else f"{s}s"
+
+
 def make_key(obs_mode, step, s: PlayerState, held=0):
     """held = the previous action (is the button already pressed?). It changes the future: GD only
     reacts to a NEW press for orbs, the UFO, the ball... Without it, two attempts in the same place,
@@ -108,6 +115,7 @@ def train(level="stereo_lite", mode="practice", obs_mode="state", episodes=20000
     best_greedy = 0.0
     best_acts = []
     last_record_ep = 0           # episode of the last new record
+    last_record_time = time.time()  # when it happened (for the time spent on each step of progress)
     total_sim_steps = 0
     t0 = time.time()
     ep = 0
@@ -187,7 +195,7 @@ def train(level="stereo_lite", mode="practice", obs_mode="state", episodes=20000
                 zone = f"{back // 60}-{2 * back // 60} s before the end (dead end?)"
             if (verbose and margin and best_acts and prev_margin and stuck_level > 0
                     and (zone, max_hold) != prev_margin):
-                print(f"ep. {ep:6d}  no new record for a while: exploring {zone}"
+                print(f"ep. {ep:6d}  {clock(time.time() - t0):>9}  no new record for a while: exploring {zone}"
                       + (f", holds up to {max_hold} steps" if max_hold > 30 else ""))
             prev_margin = (zone, max_hold) if margin else None
             # Keep about `explore_budget` random moves per attempt in the exploration zone, whatever
@@ -276,7 +284,11 @@ def train(level="stereo_lite", mode="practice", obs_mode="state", episodes=20000
                 prog = info["progress"]
                 history.append((ep, prog))
                 new_best = prog > best_greedy
+                gap = ""
                 if new_best:
+                    now = time.time()
+                    gap = f"  (+{(prog - best_greedy) * 100:.2f}% in {clock(now - last_record_time)})"
+                    last_record_time = now
                     best_greedy = prog
                     best_acts = acts
                     last_record_ep = ep
@@ -286,8 +298,8 @@ def train(level="stereo_lite", mode="practice", obs_mode="state", episodes=20000
                         cands = [env.make_checkpoint(i, acts, states) for i in range(30, len(acts) - 1, 30)]
                         frontier = list(dict.fromkeys(c for c in cands if c is not None))
                 if verbose and (ep % print_every == 0 or new_best or info["won"]):
-                    print(f"ep. {ep:6d}  eps={eps:.3f}  agent progress = {100*prog:5.1f}%  "
-                          f"(best {100*best_greedy:5.1f}%)  known states={len(Q)}")
+                    print(f"ep. {ep:6d}  {clock(time.time() - t0):>9}  eps={eps:.3f}  agent progress = {100*prog:5.1f}%  "
+                          f"(best {100*best_greedy:5.1f}%)  known states={len(Q)}{gap}")
                 if info["won"]:
                     dt = time.time() - t0
                     if verbose:
@@ -320,6 +332,9 @@ if __name__ == "__main__":
     p.add_argument("--max-fall", type=float, default=1.5,
                    help="real game only, cube mode: an attempt moving at full vertical speed for more than "
                         "N seconds is stopped and counted as a death (lost in the sky; 0 = off)")
+    p.add_argument("--air-checkpoints", action="store_true",
+                   help="real game: also place checkpoints in the air (long ship/wave sections), when GD "
+                        "restores the vertical speed exactly")
     p.add_argument("--resume", action="store_true", help="start from the saved Q-table")
     p.add_argument("--resume-from", help="start from this Q-table file (e.g. one trained in normal mode)")
     p.add_argument("--seed-run", help="teach the agent a saved run first (e.g. its best run, if the Q-table was lost)")
@@ -342,6 +357,7 @@ if __name__ == "__main__":
         from realenv import RealGDEnv
         args.level = args.level or "real"
         env = RealGDEnv(speed=args.speed, max_fall=args.max_fall)
+        env.air_checkpoints = args.air_checkpoints
 
     tag = f"{args.level}_{args.mode}_{args.obs}"
     qtable_path = f"qtable_{tag}.pkl"

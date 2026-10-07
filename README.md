@@ -8,8 +8,11 @@ everything else, it learns by dying.
 
 ## Results
 
-**15 of the 22 official levels beaten**, including the two demons tried so far, **Clubstep** and **Deadlocked**.
+**16 of the 22 official levels beaten**, including the two demons tried so far, **Clubstep** and **Deadlocked**.
 Most levels take 3 to 7 minutes of training; the two demons took 13.5 (Deadlocked) and 23 minutes (Clubstep).
+Without checkpoints (every attempt from the start), the agent needs fewer attempts but 5 to 6 times more time:
+26 minutes for Stereo Madness and 37 for Back on Track, because each attempt replays the whole level.
+On Grief, an extreme demon, it reached 38% with the help of a backtracking search (`tools/search_stuck.py`).
 
 ![Is a level hard for the AI when it is hard for humans?](docs/figures/ai_vs_official_difficulty.png)
 
@@ -98,6 +101,7 @@ The log shows how exploration widens when no record is beaten. If it stays stuck
 python watch_best.py solution_qlearning_<level>_practice_state.txt   # where and how does it die?
 python -m tools.diag_stuck <level>                                    # what happens around the death
 python -m tools.diag_greedy <level>                                   # does the agent still follow its best run?
+python -m tools.search_stuck <level>                                  # backtracking search past the wall, then --resume --seed-run
 ```
 
 ## First experiments: the simulator
@@ -124,6 +128,6 @@ These numbers predate reverse replay, which made the agent several times faster.
 
 ## Next steps
 
-- The 7 remaining official levels.
+- The 6 remaining official levels.
 - Clean reruns of every level with the current version, several seeds each, for a fair difficulty ranking.
 - Phase 2: an agent that sees the level and has to generalize to levels it has never played.

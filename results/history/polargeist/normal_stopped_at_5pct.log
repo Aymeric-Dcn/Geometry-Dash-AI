@@ -1,0 +1,6 @@
+RUN level=polargeist id=3 mode=normal variant=default reverse=True hold=True obs=state max_minutes=90.0 started=2026-10-07T10:18:13
+ep.     50         3s  eps=0.300  agent progress =   5.8%  (best   5.8%)  known states=3419  (+5.79% in 3s)
+ep.    200        21s  eps=0.299  agent progress =   5.8%  (best   5.8%)  known states=3453
+ep.    250        26s  eps=0.299  agent progress =   5.8%  (best   5.8%)  known states=3508  (+0.01% in 22s)
+
+Stopped by the user after 339 episodes.

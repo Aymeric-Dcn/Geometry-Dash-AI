@@ -1,0 +1,4 @@
+level_id,level,mode,variant,won,best_progress,episodes,steps_played,seconds,finished_at
+1,stereo_madness,normal,default,True,1.0,1700,4725763,1586.6,2026-10-07T09:41:18
+2,back_on_track,normal,default,True,1.0,2750,6873904,2215.0,2026-10-07T10:18:13
+16,hexagon_force,practice,default,True,1.0,6850,1391029,604.6,2026-10-07T10:32:17

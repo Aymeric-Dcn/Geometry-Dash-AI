@@ -40,6 +40,7 @@ class PlayerState:
     won: bool = False
     tick: int = 0
     mode: int = 0          # game mode (real game only: 0 cube, 1 ship, 3 UFO...)
+    yv: float = 0.0        # real game only: GD's own vertical speed (to check checkpoints in the air)
 
 
 class Level:

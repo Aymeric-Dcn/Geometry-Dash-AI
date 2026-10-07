@@ -43,7 +43,9 @@ Généré par `python make_report.py` à partir des logs de `results/` (données
 
 | Level | Mode | Variant | Result | Episodes | Steps played | Time | Notes |
 |---|---|---|---|---|---|---|---|
+| Stereo Madness | normal | default | beaten | 1,700 | 4,725,763 | 26.4 min |  |
 | Stereo Madness | practice | default | beaten | 4,150 | 749,552 | 4.8 min |  |
+| Back on Track | normal | default | beaten | 2,750 | 6,873,904 | 36.9 min |  |
 | Back on Track | practice | default | beaten | 3,950 | 1,062,140 | 6.0 min |  |
 | Polargeist | practice | default | beaten | 2,600 | 457,379 | 2.8 min |  |
 | Dry Out | practice | default | beaten | 5,150 | 848,323 | 5.5 min |  |
@@ -57,10 +59,12 @@ Généré par `python make_report.py` à partir des logs de `results/` (données
 | Theory of Everything | practice | default | beaten | 6,850 | 1,112,616 | 7.5 min | 2 checkpoint(s) set aside |
 | Electroman Adventures | practice | default | beaten | 4,600 | 1,150,451 | 6.5 min |  |
 | Clubstep | practice | default | beaten | 16,750 | 2,830,820 | 22.7 min | finer state (--obs fine) |
+| Hexagon Force | practice | default | beaten | 6,850 | 1,391,029 | 10.1 min |  |
 | Deadlocked | practice | default | beaten | 9,150 | 2,065,893 | 13.5 min | finer state (--obs fine) |
 
 ![minutes_per_level.png](figures/minutes_per_level.png)
 ![curves_practice.png](figures/curves_practice.png)
+![curves_normal.png](figures/curves_normal.png)
 
 ### Difficulty according to the AI / Difficulté selon l'IA
 
@@ -71,20 +75,21 @@ Levels ranked by the number of attempts (practice mode) the agent needed to beat
 | 1 | Clubstep | 14 | 16,750 | stuck 1,300 attempts at 83% |
 | 2 | Deadlocked | 15 | 9,150 | stuck 1,500 attempts at 52% |
 | 3 | Theory of Everything | 12 | 6,850 | stuck 1,150 attempts at 81% |
-| 4 | Can't Let Go | 6 | 6,450 | stuck 1,850 attempts at 62% |
-| 5 | Jumper | 7 | 5,350 | stuck 1,000 attempts at 33% |
-| 6 | Dry Out | 4 | 5,150 | stuck 700 attempts at 81% |
-| 7 | Time Machine | 8 | 4,600 | stuck 550 attempts at 25% |
-| 8 | Electroman Adventures | 10 | 4,600 | stuck 1,000 attempts at 28% |
-| 9 | Stereo Madness | 1 | 4,150 | stuck 1,050 attempts at 95% |
-| 10 | Clutterfunk | 11 | 4,000 | stuck 650 attempts at 66% |
-| 11 | Back on Track | 2 | 3,950 | stuck 1,550 attempts at 64% |
-| 12 | xStep | 10 | 3,900 | stuck 650 attempts at 22% |
-| 13 | Cycles | 9 | 2,950 | stuck 200 attempts at 24% |
-| 14 | Polargeist | 3 | 2,600 | stuck 250 attempts at 74% |
-| 15 | Base After Base | 5 | 2,500 | stuck 200 attempts at 40% |
+| 4 | Hexagon Force | 12 | 6,850 | stuck 1,050 attempts at 94% |
+| 5 | Can't Let Go | 6 | 6,450 | stuck 1,850 attempts at 62% |
+| 6 | Jumper | 7 | 5,350 | stuck 1,000 attempts at 33% |
+| 7 | Dry Out | 4 | 5,150 | stuck 700 attempts at 81% |
+| 8 | Time Machine | 8 | 4,600 | stuck 550 attempts at 25% |
+| 9 | Electroman Adventures | 10 | 4,600 | stuck 1,000 attempts at 28% |
+| 10 | Stereo Madness | 1 | 4,150 | stuck 1,050 attempts at 95% |
+| 11 | Clutterfunk | 11 | 4,000 | stuck 650 attempts at 66% |
+| 12 | Back on Track | 2 | 3,950 | stuck 1,550 attempts at 64% |
+| 13 | xStep | 10 | 3,900 | stuck 650 attempts at 22% |
+| 14 | Cycles | 9 | 2,950 | stuck 200 attempts at 24% |
+| 15 | Polargeist | 3 | 2,600 | stuck 250 attempts at 74% |
+| 16 | Base After Base | 5 | 2,500 | stuck 200 attempts at 40% |
 
-Agreement with the official difficulty (Spearman rank correlation, 1 = same order, 0 = unrelated): **0.52** over 15 levels.
+Agreement with the official difficulty (Spearman rank correlation, 1 = same order, 0 = unrelated): **0.60** over 16 levels.
 
 ![ai_vs_official_difficulty.png](figures/ai_vs_official_difficulty.png)
 

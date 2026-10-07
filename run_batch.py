@@ -6,6 +6,7 @@ Open ANY level in GD first (the mod only listens while a level is open), then fo
     python run_batch.py --levels 1-9 --mode normal
     python run_batch.py --levels 1,3,5 --no-reverse --max-minutes 60 --variant no-reverse
     python run_batch.py --levels 1-9 --mode normal --skip-done      # continue an interrupted batch
+    python run_batch.py --levels no-demons --mode normal            # every official level but the demons
 
 For each level it writes, in results/runs/:
     <level>__<mode>__<variant>.log         the training log (first line describes the run)
@@ -30,6 +31,7 @@ LEVELS = {
     16: "hexagon_force", 17: "blast_processing", 18: "theory_of_everything_2",
     19: "geometrical_dominator", 20: "deadlocked", 21: "fingerdash", 22: "dash",
 }
+DEMONS = {14, 18, 20}           # Clubstep, Theory of Everything 2, Deadlocked
 RUNS_DIR = os.path.join("results", "runs")
 SUMMARY = os.path.join(RUNS_DIR, "summary.csv")
 FIELDS = ["level_id", "level", "mode", "variant", "won", "best_progress", "episodes",
@@ -56,6 +58,8 @@ class Tee:
 
 
 def parse_levels(text):
+    if text in ("all", "no-demons"):
+        return [i for i in LEVELS if text == "all" or i not in DEMONS]
     ids = []
     for part in text.split(","):
         if "-" in part:
@@ -78,7 +82,8 @@ def done_runs():
 
 def main():
     p = argparse.ArgumentParser()
-    p.add_argument("--levels", default="1-9", help="e.g. 1-9 or 1,3,5 (1 = Stereo Madness)")
+    p.add_argument("--levels", default="1-9",
+                   help="e.g. 1-9 or 1,3,5 (1 = Stereo Madness), 'all', or 'no-demons' (all but 14, 18, 20)")
     p.add_argument("--mode", choices=["practice", "normal"], default="practice")
     p.add_argument("--variant", default=None, help="name for this configuration (default: 'default' "
                                                   "or 'no-reverse' / 'no-hold')")
@@ -86,15 +91,20 @@ def main():
     p.add_argument("--max-minutes", type=float, default=120, help="time limit per level")
     p.add_argument("--speed", type=int, default=20)
     p.add_argument("--eps-start", type=float, default=0.3)
+    p.add_argument("--obs", choices=["state", "fine"], default="state")
+    p.add_argument("--max-level-seconds", type=float, default=200,
+                   help="an attempt longer than this is stopped (official levels last under 2 min)")
     p.add_argument("--no-reverse", action="store_true")
     p.add_argument("--no-hold", action="store_true")
     p.add_argument("--skip-done", action="store_true", help="skip runs already in summary.csv")
     args = p.parse_args()
 
     variant = args.variant or ("no-reverse" if args.no_reverse else "no-hold" if args.no_hold else "default")
+    if args.obs != "state" and not args.variant:
+        variant += f"-{args.obs}"
     os.makedirs(RUNS_DIR, exist_ok=True)
     already = done_runs() if args.skip_done else set()
-    env = RealGDEnv(speed=args.speed)
+    env = RealGDEnv(speed=args.speed, max_seconds=args.max_level_seconds)
 
     for level_id in parse_levels(args.levels):
         name = LEVELS[level_id]
@@ -105,7 +115,7 @@ def main():
         tee = Tee(base + ".log")
         sys.stdout = tee
         print(f"RUN level={name} id={level_id} mode={args.mode} variant={variant} "
-              f"reverse={not args.no_reverse} hold={not args.no_hold} max_minutes={args.max_minutes} "
+              f"reverse={not args.no_reverse} hold={not args.no_hold} obs={args.obs} max_minutes={args.max_minutes} "
               f"started={datetime.datetime.now().isoformat(timespec='seconds')}")
         res = None
         try:
@@ -117,7 +127,7 @@ def main():
                     pickle.dump(dict(Q), f)
                 os.replace(qtable + ".tmp", qtable)
 
-            res = train(name, args.mode, "state", args.episodes, env=env, verbose=True,
+            res = train(name, args.mode, args.obs, args.episodes, env=env, verbose=True,
                         eps_start=args.eps_start, print_every=200, save_every=200, save_fn=save,
                         focus_margin=30, explore_hold=not args.no_hold,
                         reverse_replay=not args.no_reverse, max_seconds=args.max_minutes * 60)

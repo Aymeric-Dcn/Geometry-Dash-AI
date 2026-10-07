@@ -1,6 +1,8 @@
 level,mode,variant,won,best_percent,episodes,steps_played,seconds,note,source
 stereo_madness,practice,default,True,100.0,4150,749552,286.8,,results/stereo_madness/log.txt
+stereo_madness,normal,default,True,100.0,1700,4725763,1586.6,,results/runs/stereo_madness__normal__default.log
 back_on_track,practice,default,True,100.0,3950,1062140,362.2,,results/back_on_track/log.txt
+back_on_track,normal,default,True,100.0,2750,6873904,2215.0,,results/runs/back_on_track__normal__default.log
 polargeist,practice,default,True,100.0,2600,457379,166.9,,results/polargeist/log.txt
 dry_out,practice,default,True,100.0,5150,848323,331.8,,results/dry_out/log.txt
 base_after_base,practice,default,True,100.0,2500,486299,175.0,,results/base_after_base/log.txt
@@ -13,4 +15,5 @@ clutterfunk,practice,default,True,100.0,4000,800529,301.2,,results/clutterfunk/l
 theory_of_everything,practice,default,True,100.0,6850,1112616,450.3,,results/theory_of_everything/log.txt
 electroman_adventures,practice,default,True,100.0,4600,1150451,392.8,,results/electroman_adventures/log.txt
 clubstep,practice,default,True,100.0,16750,2830820,1362.8,finer state (--obs fine),results/clubstep/log.txt
+hexagon_force,practice,default,True,100.0,6850,1391029,604.6,,results/runs/hexagon_force__practice__default.log
 deadlocked,practice,default,True,100.0,9150,2065893,809.2,finer state (--obs fine),results/deadlocked/log.txt

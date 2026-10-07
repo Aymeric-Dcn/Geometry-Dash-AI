@@ -8,8 +8,11 @@ tout le reste, elle l'apprend en mourant.
 
 ## Résultats
 
-**15 des 22 niveaux officiels finis**, dont les deux démons tentés pour l'instant, **Clubstep** et **Deadlocked**.
+**16 des 22 niveaux officiels finis**, dont les deux démons tentés pour l'instant, **Clubstep** et **Deadlocked**.
 La plupart des niveaux demandent 3 à 7 minutes d'entraînement ; les deux démons en ont demandé 13,5 (Deadlocked) et 23 (Clubstep).
+Sans checkpoints (chaque essai part du début), l'IA a besoin de moins d'essais mais de 5 à 6 fois plus de temps :
+26 minutes pour Stereo Madness et 37 pour Back on Track, car chaque essai rejoue tout le niveau.
+Sur Grief, un extreme demon, elle a atteint 38 % avec l'aide d'une recherche par retour arrière (`tools/search_stuck.py`).
 
 ![Un niveau difficile pour les humains l'est-il aussi pour l'IA ?](docs/figures/ai_vs_official_difficulty.png)
 
@@ -99,6 +102,7 @@ Le log indique comment l'exploration s'élargit quand aucun record ne tombe. Si 
 python watch_best.py solution_qlearning_<niveau>_practice_state.txt   # où et comment meurt-elle ?
 python -m tools.diag_stuck <niveau>                                    # ce qui se passe autour de la mort
 python -m tools.diag_greedy <niveau>                                   # suit-elle encore son meilleur essai ?
+python -m tools.search_stuck <niveau>                                  # recherche par retour arrière, puis --resume --seed-run
 ```
 
 ## Premières expériences : le simulateur
@@ -125,6 +129,6 @@ Ces chiffres datent d'avant le reverse replay, qui a rendu l'IA plusieurs fois p
 
 ## Suite
 
-- Les 7 niveaux officiels restants.
+- Les 6 niveaux officiels restants.
 - Relancer proprement tous les niveaux avec la version actuelle, plusieurs graines chacun, pour un classement de difficulté équitable.
 - Phase 2 : une IA qui voit le niveau et doit se débrouiller sur des niveaux qu'elle n'a jamais joués.

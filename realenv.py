@@ -62,6 +62,9 @@ class Checkpoint:
     x: float = 0.0
     y: float = 0.0
     mode: int = 0
+    air: bool = False   # placed in the air (see RealGDEnv.air_checkpoints)
+    vy: float = 0.0     # vertical speed right after the respawn, as seen by the agent (blocks/s)
+    yv: float = 0.0     # the same, as GD stores it: checked after the respawn
 
 
 class RealGDEnv:
@@ -73,6 +76,10 @@ class RealGDEnv:
         (Clutterfunk). A height limit does not work: legit runs climb 15+ blocks with orbs
         (Clubstep) or fall a long way. Other modes (ship, UFO...): no limit. 0 = off."""
         self.max_fall = max_fall
+        # Checkpoints in the air (ship, wave, UFO...): off by default. Long flying sections have no
+        # place on the ground, so attempts restart far back. When on, a checkpoint in the air is only
+        # used if GD restores its vertical speed exactly (checked at every respawn).
+        self.air_checkpoints = False
         self._full_speed_steps = 0
         try:
             self.sock = socket.create_connection((host, port), timeout=5)
@@ -136,7 +143,8 @@ class RealGDEnv:
         y = (raw.y - self._origin[1]) / UNITS_PER_BLOCK
         # Vertical speed in blocks/s, measured from the movement (same meaning as in the simulator)
         vy = 0.0 if prev is None else (y - prev.y) / STEP_SECONDS
-        return PlayerState(x, y, vy, raw.grounded, raw.dead, self._real_win(raw), self.steps * 4, raw.mode)
+        return PlayerState(x, y, vy, raw.grounded, raw.dead, self._real_win(raw), self.steps * 4, raw.mode,
+                           raw.y_velocity)
 
     @staticmethod
     def _real_win(raw: RawState) -> bool:
@@ -213,9 +221,11 @@ class RealGDEnv:
         Returns None if no valid position is found.
         """
         for k in range(min(step, len(actions) - 1), max(0, step - CHECKPOINT_SEARCH), -1):
-            if states[k].grounded and actions[k] == 0:
+            if actions[k] == 0 and (states[k].grounded or self.air_checkpoints):
+                air = not states[k].grounded
                 return Checkpoint(step=k + 1, prefix=tuple(actions[:k]), x=states[k + 1].x, y=states[k + 1].y,
-                                  mode=states[k + 1].mode)
+                                  mode=states[k + 1].mode, air=air, vy=states[k + 1].vy if air else 0.0,
+                                  yv=states[k + 1].yv if air else 0.0)
         return None
 
     # --- Gym-like API -------------------------------------------------------------------
@@ -238,7 +248,8 @@ class RealGDEnv:
                 self._restart()                          # respawn at the checkpoint
                 x = (self.raw.x - self._origin[0]) / UNITS_PER_BLOCK
                 y = (self.raw.y - self._origin[1]) / UNITS_PER_BLOCK
-                if abs(x - cp.x) < 1e-3 and abs(y - cp.y) < 1e-3 and self.raw.mode == cp.mode:
+                same_speed = not cp.air or abs(self.raw.y_velocity - cp.yv) < 1e-3
+                if abs(x - cp.x) < 1e-3 and abs(y - cp.y) < 1e-3 and self.raw.mode == cp.mode and same_speed:
                     break
                 # Not where we expected: the checkpoint was lost (or the game is not deterministic).
                 # Place it again; if it keeps failing, stop rather than learn from wrong data.
@@ -249,6 +260,10 @@ class RealGDEnv:
                                    "checkpoints are not reproducible on this level")
             self.steps = cp.step
         self.state = self._to_state(self.raw, None)
+        if start_state is not None and start_state.air:
+            # The agent measures its speed from the previous step, which a respawn does not have:
+            # give it the speed of the original run, so its situation looks exactly the same
+            self.state = replace(self.state, vy=start_state.vy)
         return self.obs(), {}
 
     def step(self, action):

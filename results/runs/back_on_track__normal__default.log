@@ -1,0 +1,38 @@
+RUN level=back_on_track id=2 mode=normal variant=default reverse=True hold=True obs=state max_minutes=90.0 started=2026-10-07T09:41:18
+ep.     50         3s  eps=0.300  agent progress =   6.0%  (best   6.0%)  known states=2590  (+6.00% in 3s)
+ep.    100        10s  eps=0.300  agent progress =   7.7%  (best   7.7%)  known states=3430  (+1.68% in 6s)
+ep.    150        18s  eps=0.300  agent progress =  10.0%  (best  10.0%)  known states=3986  (+2.28% in 7s)
+ep.    200        28s  eps=0.299  agent progress =  10.1%  (best  10.1%)  known states=4379  (+0.14% in 9s)
+ep.    250        37s  eps=0.299  agent progress =  11.7%  (best  11.7%)  known states=4728  (+1.60% in 9s)
+ep.    300        49s  eps=0.299  agent progress =  15.4%  (best  15.4%)  known states=5819  (+3.71% in 11s)
+ep.    350      1m04s  eps=0.299  agent progress =  16.3%  (best  16.3%)  known states=6253  (+0.92% in 14s)
+ep.    400      1m19s  eps=0.299  agent progress =  22.7%  (best  22.7%)  known states=7059  (+6.36% in 15s)
+ep.    600      2m41s  eps=0.298  agent progress =  23.1%  (best  23.1%)  known states=7194  (+0.45% in 1m21s)
+ep.    800      3m21s  eps=0.298  agent progress =   9.2%  (best  23.1%)  known states=9252
+ep.   1000      4m14s  eps=0.297  agent progress =  30.6%  (best  30.6%)  known states=10225  (+7.46% in 1m32s)
+ep.   1050      4m37s  eps=0.297  agent progress =  32.6%  (best  32.6%)  known states=11290  (+1.99% in 23s)
+ep.   1100      5m02s  eps=0.297  agent progress =  33.6%  (best  33.6%)  known states=11411  (+0.96% in 25s)
+ep.   1150      5m34s  eps=0.297  agent progress =  37.9%  (best  37.9%)  known states=12459  (+4.30% in 31s)
+ep.   1200      6m08s  eps=0.296  agent progress =  43.9%  (best  43.9%)  known states=14583  (+6.04% in 34s)
+ep.   1300      7m26s  eps=0.296  agent progress =  44.2%  (best  44.2%)  known states=14873  (+0.32% in 1m18s)
+ep.   1350      8m06s  eps=0.296  agent progress =  49.7%  (best  49.7%)  known states=15697  (+5.47% in 40s)
+ep.   1400      8m53s  eps=0.296  agent progress =  53.1%  (best  53.1%)  known states=20163  (+3.44% in 46s)
+ep.   1450      9m41s  eps=0.296  agent progress =  61.3%  (best  61.3%)  known states=22741  (+8.17% in 48s)
+ep.   1550     11m25s  eps=0.295  agent progress =  63.5%  (best  63.5%)  known states=23739  (+2.17% in 1m43s)
+ep.   1600     12m19s  eps=0.295  agent progress =  67.7%  (best  67.7%)  known states=25021  (+4.23% in 54s)
+ep.   1650     13m13s  eps=0.295  agent progress =  69.8%  (best  69.8%)  known states=26292  (+2.08% in 53s)
+ep.   1700     14m10s  eps=0.295  agent progress =  72.3%  (best  72.3%)  known states=27059  (+2.52% in 57s)
+ep.   1750     15m12s  eps=0.295  agent progress =  78.5%  (best  78.5%)  known states=28159  (+6.17% in 1m02s)
+ep.   1800     16m16s  eps=0.295  agent progress =  78.5%  (best  78.5%)  known states=28273  (+0.04% in 1m03s)
+ep.   1900     18m29s  eps=0.294  agent progress =  78.5%  (best  78.5%)  known states=28584  (+0.02% in 2m12s)
+ep.   2000     20m35s  eps=0.294  agent progress =  78.5%  (best  78.5%)  known states=28702
+ep.   2100     22m48s  eps=0.294  agent progress =  81.1%  (best  81.1%)  known states=29238  (+2.54% in 4m18s)
+ep.   2200     25m04s  eps=0.293  agent progress =  84.4%  (best  84.4%)  known states=30062  (+3.36% in 2m15s)
+ep.   2400     29m10s  eps=0.293  agent progress =  84.4%  (best  84.4%)  known states=30094
+ep.   2450     30m11s  eps=0.293  agent progress =  88.4%  (best  88.4%)  known states=31242  (+3.98% in 5m07s)
+ep.   2500     31m14s  eps=0.292  agent progress =  90.2%  (best  90.2%)  known states=31765  (+1.77% in 1m03s)
+ep.   2550     32m19s  eps=0.292  agent progress =  94.9%  (best  94.9%)  known states=32620  (+4.69% in 1m04s)
+ep.   2600     33m27s  eps=0.292  agent progress =  97.0%  (best  97.0%)  known states=33486  (+2.17% in 1m08s)
+ep.   2750     36m54s  eps=0.292  agent progress = 100.0%  (best 100.0%)  known states=34333  (+2.96% in 3m27s)
+
+>>> LEVEL BEATEN after 2750 episodes, 6873904 steps simulated, 2215.0s
