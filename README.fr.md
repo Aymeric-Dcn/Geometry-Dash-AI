@@ -48,7 +48,8 @@ mod/                 le mod Geode (C++), compilé par GitHub Actions
 results/<niveau>/    log d'entraînement et partie gagnante de chaque niveau fini (history/ : essais de développement)
 docs/                rapport de résultats et figures
 tools/               tests de connexion et outils de débogage
-sim/                 les premières expériences : une copie simplifiée de GD en Python (cube seulement)
+sim/                 les premières expériences : une copie simplifiée de GD en Python (cube seulement), niveaux aléatoires
+deep/                phase 2 : un réseau de neurones (NumPy uniquement) qui voit le niveau, sur le simulateur
 ```
 
 ## Prise en main
@@ -127,8 +128,32 @@ python -m sim.compare                        # toutes les variantes sur 5 graine
 
 Ces chiffres datent d'avant le reverse replay, qui a rendu l'IA plusieurs fois plus rapide.
 
+## Phase 2 (commencée) : une IA qui voit le niveau
+
+L'IA aveugle apprend un niveau par cœur (« au temps t, saute ») : elle ne peut pas jouer un niveau
+qu'elle n'a jamais vu. La phase 2 lui donne des yeux : une grille de 10 x 6 cases (blocs et pics)
+autour du joueur (`sim/vision.py`), lue par un petit réseau de neurones (124 entrées, 128 puis
+64 neurones cachés, 2 sorties, 24 000 poids) entraîné en Double DQN. Tout est écrit en NumPy
+uniquement (`deep/mlp.py`), pour que chaque calcul soit visible.
+
+Il s'entraîne sur 200 niveaux aléatoires (`sim/levelgen.py`, chacun vérifié faisable par une
+recherche), puis il est testé sur 50 niveaux qu'il n'a **jamais vus** :
+
+| | Niveaux inconnus réussis | Entraînement |
+|---|---|---|
+| Q-learning aveugle | 0 (impossible par construction) | — |
+| Réseau de neurones qui voit (simulateur) | **35 / 50** (81 % de progression moyenne) | 9 minutes sur CPU |
+
+```
+python -m deep.dqn                            # entraîner (une dizaine de minutes), garde le meilleur réseau
+python -m deep.dqn --eval deep/dqn_sim.npz    # tester le réseau sauvegardé sur de nouveaux niveaux
+```
+
+Il meurt surtout contre le flanc des blocs (piliers de 2 de haut, escaliers). Ensuite : corriger
+ça, puis faire envoyer par le mod les objets autour du joueur pour l'utiliser dans le vrai jeu.
+
 ## Suite
 
 - Les 6 niveaux officiels restants.
 - Relancer proprement tous les niveaux avec la version actuelle, plusieurs graines chacun, pour un classement de difficulté équitable.
-- Phase 2 : une IA qui voit le niveau et doit se débrouiller sur des niveaux qu'elle n'a jamais joués.
+- Phase 2 dans le vrai jeu : le mod envoie les objets autour du joueur, le réseau joue des niveaux officiels qu'il n'a jamais vus.

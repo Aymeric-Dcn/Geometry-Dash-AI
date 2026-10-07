@@ -47,7 +47,8 @@ mod/                 the Geode mod (C++), built by GitHub Actions
 results/<level>/     training log and winning run of each beaten level (history/: development runs)
 docs/                results report and figures
 tools/               connection tests and debugging tools
-sim/                 the first experiments: a simplified Python copy of GD (cube only)
+sim/                 the first experiments: a simplified Python copy of GD (cube only), random levels
+deep/                phase 2: a neural network (NumPy only) that sees the level, on the simulator
 ```
 
 ## Getting started
@@ -126,8 +127,32 @@ python -m sim.compare                        # every variant over 5 seeds
 
 These numbers predate reverse replay, which made the agent several times faster.
 
+## Phase 2 (started): an agent that sees the level
+
+The blind agent memorises a level ("at time t, jump"); it cannot play a level it has never seen.
+Phase 2 gives the agent eyes: a 10 x 6 grid of blocks and spikes around the player
+(`sim/vision.py`), read by a small neural network (124 inputs, 128 and 64 hidden neurons,
+2 outputs, 24k weights) trained with Double DQN. Everything is written with NumPy only (`deep/mlp.py`),
+so every calculation is visible.
+
+It is trained on 200 random levels (`sim/levelgen.py`, each one checked beatable by a search), then
+tested on 50 levels it has **never seen**:
+
+| | Unseen levels beaten | Training time |
+|---|---|---|
+| Blind Q-learning | 0 (it cannot, by construction) | — |
+| Neural network that sees (simulator) | **35 / 50** (81% average progress) | 9 minutes on a CPU |
+
+```
+python -m deep.dqn                            # train (about 10 minutes), keeps the best network
+python -m deep.dqn --eval deep/dqn_sim.npz    # test the saved network on new levels
+```
+
+Its remaining deaths are mostly against the side of blocks (2-high pillars, stairs). Next: fix
+those, then get the mod to send the objects around the player to use it in the real game.
+
 ## Next steps
 
 - The 6 remaining official levels.
 - Clean reruns of every level with the current version, several seeds each, for a fair difficulty ranking.
-- Phase 2: an agent that sees the level and has to generalize to levels it has never played.
+- Phase 2 in the real game: the mod sends the objects around the player, the network plays official levels it has never seen.

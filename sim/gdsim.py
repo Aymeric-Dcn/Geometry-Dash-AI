@@ -110,8 +110,9 @@ class GDEnv:
     only its own state (position, height, vertical speed, grounded or not)."""
 
     def __init__(self, level_name="stereo_lite", max_seconds=60):
-        self.level_name = level_name
-        self.level = Level(LEVELS[level_name])
+        """level_name: a name from levels.py, or directly the ASCII rows of a level (list of str)."""
+        self.level_name = level_name if isinstance(level_name, str) else "custom"
+        self.level = Level(LEVELS[level_name] if isinstance(level_name, str) else level_name)
         self.max_steps = int(max_seconds * PHYS_HZ / TICKS_PER_STEP)
         self.state = PlayerState()
         self.steps = 0

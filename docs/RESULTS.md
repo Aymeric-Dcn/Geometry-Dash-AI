@@ -65,6 +65,7 @@ Généré par `python make_report.py` à partir des logs de `results/` (données
 ![minutes_per_level.png](figures/minutes_per_level.png)
 ![curves_practice.png](figures/curves_practice.png)
 ![curves_normal.png](figures/curves_normal.png)
+![practice_vs_normal.png](figures/practice_vs_normal.png)
 
 ### Difficulty according to the AI / Difficulté selon l'IA
 

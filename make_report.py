@@ -62,19 +62,24 @@ RESUMED = {
 MODE_COLOURS = {("practice", "default"): BLUE, ("normal", "default"): ORANGE}
 
 EP_LINE = re.compile(r"^ep\.\s+(\d+).*\(best\s+([\d.]+)%\)")
+CLOCK = re.compile(r"^ep\.\s+\d+\s+(?:(\d+)h)?(?:(\d+)m)?(\d+)s\s")   # elapsed time (newer logs)
 BEATEN = re.compile(r"BEATEN after (\d+) episodes, (\d+) steps simulated, ([\d.]+)s")
 LIMIT = re.compile(r"(Time limit reached|Stopped by the user) after (\d+) episodes")
 
 
 def parse_log(path):
     text = open(path, encoding="utf-8", errors="ignore").read().lstrip("﻿")
-    curve, run = [], {"won": False, "episodes": None, "steps": None, "seconds": None,
+    curve, timed, run = [], [], {"won": False, "episodes": None, "steps": None, "seconds": None,
                       "resumed": "Resumed agent" in text or "Learned the saved run" in text,
                       "set_aside": text.count("set aside")}
     for line in text.splitlines():
         m = EP_LINE.match(line.strip())
         if m:
             curve.append((int(m.group(1)), float(m.group(2))))
+            t = CLOCK.match(line.strip())
+            if t:
+                h, mi, se = (int(g or 0) for g in t.groups())
+                timed.append((3600 * h + 60 * mi + se, float(m.group(2))))
     m = BEATEN.search(text)
     if m:
         run.update(won=True, episodes=int(m.group(1)), steps=int(m.group(2)), seconds=float(m.group(3)))
@@ -84,6 +89,7 @@ def parse_log(path):
             run["episodes"] = int(m.group(2))
     run["best"] = 100.0 if run["won"] else max([b for _, b in curve] or [0.0])
     run["curve"] = run["curve_adj"] = curve
+    run["curve_time"] = timed
     run["episodes_adj"] = run["episodes"]
     header = re.search(r"^RUN (.*)$", text, re.M)
     if header:
@@ -205,6 +211,59 @@ def fig_curves(runs, path, mode="practice", variant="default"):
         ax.set_xlabel("episodes", color=INK2, fontsize=9)
     fig.suptitle(f"Best progress during training ({mode} mode)", color=INK, fontsize=11, x=0.01, ha="left")
     fig.tight_layout()
+    fig.savefig(path, dpi=140)
+    plt.close(fig)
+    return True
+
+
+def fig_compare(runs, path):
+    """Practice vs normal mode on the same level: best progress against attempts, then against time."""
+    levels = [l for l in ORDER if (l, "practice", "default") in runs and (l, "normal", "default") in runs
+              and runs[(l, "normal", "default")]["curve"]]
+    if not levels:
+        return False
+    fig, axes = plt.subplots(2, len(levels), figsize=(4.6 * len(levels) + 0.6, 6.2), sharey=True, squeeze=False)
+    approx = False
+    for k, l in enumerate(levels):
+        for mode, colour in (("practice", BLUE), ("normal", ORANGE)):
+            r = runs[(l, mode, "default")]
+            curve = r["curve"] + ([(r["episodes"], 100.0)] if r["won"] and r["episodes"] else [])
+            best, xs, ys = 0.0, [], []
+            for e, p in curve:
+                best = max(best, p)
+                xs.append(e)
+                ys.append(best)
+            axes[0, k].step(xs, ys, where="post", color=colour, linewidth=2, label=mode)
+            # Against time: the real clock when the log has one, otherwise spread the total time
+            # evenly over the attempts (older practice logs; practice attempts all last about as long)
+            if r["curve_time"]:
+                pts = r["curve_time"] + ([(r["seconds"], 100.0)] if r["won"] and r["seconds"] else [])
+                tx = [t / 60 for t, _ in pts]
+                ty = [max(p for _, p in pts[:i + 1]) for i in range(len(pts))]
+            elif r["seconds"] and r["episodes"]:
+                approx = True
+                tx = [x * r["seconds"] / r["episodes"] / 60 for x in xs]
+                ty = ys
+            else:
+                continue
+            axes[1, k].step(tx, ty, where="post", color=colour, linewidth=2,
+                            linestyle="-" if r["curve_time"] else (0, (4, 2)), label=mode)
+        axes[0, k].set_title(NAMES[l], fontsize=10, color=INK, loc="left")
+        axes[0, k].set_xlabel("attempts", color=INK2, fontsize=9)
+        axes[1, k].set_xlabel("training time (minutes)", color=INK2, fontsize=9)
+    for ax in axes.flat:
+        ax.set_ylim(0, 105)
+        style(ax)
+        ax.grid(axis="y", color=GRID, linewidth=0.8)
+    for ax in axes[:, 0]:
+        ax.set_ylabel("best %", color=INK2, fontsize=9)
+    axes[0, -1].legend(frameon=False, fontsize=9, loc="lower right")
+    title = "With checkpoints (practice) or without (normal): fewer attempts, but much more time"
+    fig.suptitle(title, color=INK, fontsize=11, x=0.01, ha="left")
+    if approx:
+        fig.text(0.01, 0.005, "Dashed: time spread evenly over the attempts (older log without a clock).",
+                 fontsize=8, color=INK2)
+    fig.tight_layout(rect=(0, 0.03, 1, 1))
     fig.savefig(path, dpi=140)
     plt.close(fig)
     return True
@@ -363,6 +422,8 @@ def main():
         figs.append("curves_practice.png")
     if fig_curves(runs, os.path.join("docs", "figures", "curves_normal.png"), mode="normal"):
         figs.append("curves_normal.png")
+    if fig_compare(runs, os.path.join("docs", "figures", "practice_vs_normal.png")):
+        figs.append("practice_vs_normal.png")
 
     block = ["<!-- results:start (generated by make_report.py, do not edit by hand) -->", "",
              table(runs), ""]
