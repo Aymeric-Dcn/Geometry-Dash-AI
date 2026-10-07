@@ -9,7 +9,7 @@ Open a level in GD, then:
 Every `--every` steps (30 = half a second) the game stops and the terminal shows the grid around
 the player: compare it with the frozen game screen, then press Enter to continue.
     @ the player (1 block)   # solid   ^ hazard (kills)   o orb / pad / portal   . empty
-The grid covers 1 block behind the player to 8 ahead, 2 blocks below its feet to 3 above.
+The grid covers 1 block behind the player to 10 ahead, 5 blocks below its feet to 4 above.
 """
 import argparse
 from collections import Counter

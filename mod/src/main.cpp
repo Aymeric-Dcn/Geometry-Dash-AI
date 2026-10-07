@@ -189,7 +189,7 @@ std::string stateLine(PlayLayer* pl) {
 
 // What the agent "sees": every object near the player, as its GD object type (GameObjectType as a
 // number: 0 solid, 2 hazard, 25 slope, rings, pads, portals...) and its hitbox, relative to the
-// player's centre, in GD units (1 block = 30). Window: 2 blocks behind to 11 ahead, 4 below to 5
+// player's centre, in GD units (1 block = 30). Window: 2 blocks behind to 12 ahead, 6 below to 6
 // above. Decoration (type 7) and objects without a hitbox are left out.
 std::string viewLine(PlayLayer* pl) {
     auto p = pl->m_player1;
@@ -204,7 +204,7 @@ std::string viewLine(PlayLayer* pl) {
             auto r = obj->getObjectRect();
             if (r.size.width <= 0.f || r.size.height <= 0.f) continue;
             float dx = r.origin.x - px, dy = r.origin.y - py;
-            if (dx + r.size.width < -60.f || dx > 330.f || dy + r.size.height < -120.f || dy > 150.f) continue;
+            if (dx + r.size.width < -60.f || dx > 360.f || dy + r.size.height < -180.f || dy > 180.f) continue;
             out += fmt::format(" {} {:.1f} {:.1f} {:.1f} {:.1f}", type, dx, dy, r.size.width, r.size.height);
             if (++n >= 400) break;
         }
